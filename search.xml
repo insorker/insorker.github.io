@@ -59,19 +59,8 @@
     
     <entry>
       <title>404</title>
-      <link href="404/index.html"/>
-      <url>404/index.html</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>categories</title>
-      <link href="categories/index.html"/>
-      <url>categories/index.html</url>
+      <link href="/404.html"/>
+      <url>/404.html</url>
       
         <content type="html"><![CDATA[]]></content>
       
@@ -91,7 +80,18 @@
     
     
     <entry>
-      <title>tags</title>
+      <title>分类(^_−)☆</title>
+      <link href="categories/index.html"/>
+      <url>categories/index.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>标签o(´^｀)o</title>
       <link href="tags/index.html"/>
       <url>tags/index.html</url>
       
