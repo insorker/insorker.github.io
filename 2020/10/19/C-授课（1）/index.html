@@ -13,7 +13,7 @@
 <p>一些你需要知道的 C++ 小知识，说实话这个是我后面才写的，因为发现好多东西零零散散的讲太破坏节奏了，所以专门放到了这个 C++ 授课（1）</p>
 <p>嗯，开始吧</p>
 <h2 id="关于"><a class="markdownIt-Anchor" href="#关于"></a> 关于&amp;</h2>
-<p>**引用（reference）**为对象起了另外一个名字，通过将声明符写成 &amp;d 的形式来定义引用类型，其中 d 是声明的变量名：</p>
+<p><strong>引用 reference</strong>为对象起了另外一个名字，通过将声明符写成 &amp;d 的形式来定义引用类型，其中 d 是声明的变量名：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> ival = <span class="number">1024</span>;</span><br><span class="line"><span class="keyword">int</span> &amp;refVal = ival;		<span class="comment">// refVal指向ival（是ival的另外一个名字）</span></span><br><span class="line"><span class="keyword">int</span> &amp;refVa2;			<span class="comment">// 报错：引用必须被初始化</span></span><br></pre></td></tr></table></figure>
 <p>引用有点像绑定，两个对象是同一个东西，只是名字不一样</p>
 <p>如果接下来没学过指针和函数就可以选择以后来看，当然现在看也没问题</p>
@@ -41,7 +41,7 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> temp = dval;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> &amp;ri = temp;</span><br></pre></td></tr></table></figure>
 <p>对常量的引用为非 const 值时，不能通过常量引用对其修改，但是可以直接修改变量，在此不做过多演示了</p>
 <h3 id="指针和const"><a class="markdownIt-Anchor" href="#指针和const"></a> 指针和const</h3>
-<p>指针是对象而引用不是，因此指针本身定为常量是一件非常合乎情理的事情。**常量指针（const pointer）**必须初始化，初始化完成后，它的值（也就是存放在指针中的那个地址）就不能改变了。</p>
+<p>指针是对象而引用不是，因此指针本身定为常量是一件非常合乎情理的事情。<strong>常量指针 const pointer</strong>必须初始化，初始化完成后，它的值（也就是存放在指针中的那个地址）就不能改变了。</p>
 <p>把 * 放在 const 关键字之前用以说明指针是一个常量，这样的书写形式隐含着一层意味，即不变的是指针本身的值而非指向的那个值。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> errNumb = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> *<span class="keyword">const</span> curErr = &amp;errNumb;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">double</span> pi = <span class="number">3.1415926</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">double</span> *<span class="keyword">const</span> pip = &amp;pi;	<span class="comment">// pip是一个纸箱常量对象的常量指针</span></span><br></pre></td></tr></table></figure>
 <p>小技巧：从右往左读</p>
@@ -49,8 +49,8 @@
 <p>所以完全可以通过 curErr 修改 errNumb 的值</p>
 <p>最后既然书上提到了顶层 const 和底层 const，那就顺便说明一下</p>
 <ul>
-<li>**顶层 const （top-level const）**表示指针本身是个常量；更一般的，</li>
-<li>**底层 const （low-level const）**表示指针所指的对象是个常量</li>
+<li><strong>顶层 const top-level const</strong>表示指针本身是个常量；更一般的，</li>
+<li><strong>底层 const low-level const</strong>表示指针所指的对象是个常量</li>
 </ul>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> *<span class="keyword">const</span> p1 = &amp;i;		 <span class="comment">// 不能改变p1的值，这是一个顶层 const</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> ci = <span class="number">42</span>;		 <span class="comment">// 不能改变ci的值，这是一个顶层 const</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *p2 = &amp;ci;	 <span class="comment">// 允许改变p2的值，这是一个底层 const</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> *<span class="keyword">const</span> p3 = p2 <span class="comment">// 靠右的const是顶层const，靠左的是底层const</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> &amp;r = ci;		 <span class="comment">// 用于声明引用的const都是底层const</span></span><br></pre></td></tr></table></figure>
 <p>执行拷贝操作时，顶层 const 和底层 const 区别明显，这里不再赘述。</p>
