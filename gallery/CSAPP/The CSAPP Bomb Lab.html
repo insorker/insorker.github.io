@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The CSAPP Bomb Lab</title>
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link href="/css/prism.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            <h1>The CSAPP Bomb Lab</h1>
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | Posted on 2021-12-28</span>
+        </div>
+    </div>
+    <div><p>﻿---
+date: 2021-11-16</p>
+<hr />
+<p>﻿# The CS:APP Bomb Lab</p>
+<ul>
+<li>insorker</li>
+<li>2021/11/16</li>
+</ul>
+<h2 id="hello">Hello</h2>
+<p>电赛寄了，所以滚回来做bomblab了</p>
+<h2 id="introduction">Introduction</h2>
+<p>这个 Lab 一样让人摸不着头脑，上手的话还是属于完全不知道干什么，但是一旦上手做出第一题就好像穿了三天的内裤终于被换掉一样脑袋要高兴地从天上飞到地下，所以为了防止接下来的初上手的萌新大佬不知道从何下手，我先写一个简短的上手入门来帮助大家。</p>
+<h2 id="how-to-get-start">How to get start</h2>
+<blockquote>
+<p>无剧透，放心食用</p>
+<p>which to blow yourself up. Have a nice day!</p>
+</blockquote>
+<ol>
+<li>第一件事是学会如何使用<strong>gdb</strong>，我给出学校官方的简洁教程，希望大家能完整的跟一遍，帮助确实很大</li>
+</ol>
+<blockquote>
+<p><a href="http://beej.us/guide/bggdb/">http://beej.us/guide/bggdb/</a></p>
+</blockquote>
+<ol>
+<li>如果是第一次学会 gdb 的使用，可能还有点使不上劲，不建议直接用书上的<code>disas</code>，推荐使用<code>layout</code>，可以上网百度，或者 help 一下，或者使用以下简单的指令</li>
+</ol>
+<blockquote>
+<p>layout 用于分割窗口，可以一边查看代码，一边测试。主要有以下几种用法：
+   layout src：显示源代码窗口
+   layout asm：显示汇编窗口
+   layout regs：显示源代码/汇编和寄存器窗口
+   layout split：显示源代码和汇编窗口
+   layout next：显示下一个layout
+   layout prev：显示上一个layout
+   Ctrl + L：刷新窗口
+   Ctrl + x，再按1：单窗口模式，显示一个窗口
+   Ctrl + x，再按2：双窗口模式，显示两个窗口</p>
+<p>​  Ctrl + x，再按a：回到传统模式，即退出layout，回到执行layout之前的调试窗口。</p>
+</blockquote>
+<ol>
+<li>学习一些输出的小诀窍，比如搜索 gdb x，还有如下</li>
+</ol>
+<p><code>c
+   print *(char *)$rax</code></p>
+<p>然后就没什么好说的了，动手试试吧</p>
+<h2 id="problem">Problem</h2>
+<h3 id="1-phase_1">1. phase_1</h3>
+<blockquote>
+<p>Hmm...  Six phases must be more secure than one phase!</p>
+</blockquote>
+<h4 id="_1">开解</h4>
+<p>很简单的题目，专门坑不熟悉 gdb 使用的新手</p>
+<ol>
+<li>
+<p>在<code>input = read_line();</code>前敲下断点
+   <img alt="" src="https://img-blog.csdnimg.cn/56221e3c15684552b7ff113d63cc23b3.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16" /></p>
+</li>
+<li>
+<p>执行后发现值被存入了寄存器 %rdi
+<img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/867c291a5b6e46c0bb316ed9716d6917.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16" /></p>
+</li>
+<li>
+<p>然后单步进入 phase_1 发现 esi 被存值 'B'，而且调用了函数 strings_not_equal，可想而知，需要输入的字母是<strong>B</strong>
+<img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/54af0c9caca746579d2ba6d46a5ae0ec.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16" /></p>
+</li>
+<li>
+<p>验证，寄了</p>
+<p>当时做到这里我是万分激动啊，觉得简单又有成就感，但是尝试输入'B'结果失败了，让我大吃一惊。回头查看程序，一步步调试 strings_not_equal，发现果然是我想当然了，题目从来没明说过输入只是一个字符，我调试了里面的 string_length，发现正确答案竟然有 52 个字符，但不可否认的是，我思路是对的，查看的方式错了，于是有了接下来的</p>
+</li>
+<li>
+<p><img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/95377c1e00534d00bc48ee08378bd363.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16" /></p>
+</li>
+<li>
+<p>这下OK了</p>
+</li>
+</ol>
+<h4 id="_2">答案</h4>
+<p>Border relations with Canada have never been better.</p>
+<blockquote>
+<p>Phase 1 defused. How about the next one?</p>
+</blockquote>
+<h3 id="2-phase_2">2. phase_2</h3>
+<blockquote>
+<p>The second phase is harder.  No one will ever figure out how to defuse this...</p>
+</blockquote>
+<h4 id="_3">开解</h4>
+<p>不写太详细了，因为截图太麻烦了</p>
+<p>这题需要一定想象力，题目还是很简单的。首先要猜测输入是什么，从一些蛛丝马迹还是可以看出来到底输入是什么，比如</p>
+<pre><code class="language-c">0x400f05 &lt;phase_2+9&gt;    callq  0x40145c &lt;read_six_numbers&gt;
+</code></pre>
+<p>只有英语专八才能看出来是输入6个数字，事实也确实是输入6个数字，内部细节我看了，和主线没关系（唯一的关系告诉了你，所有参数寄存器的地址都被移送到了栈中，也就是你的输入被送到了栈中存储）</p>
+<pre><code class="language-C">(gdb) x/6dw $rsp
+0x7ffffffeda60: 1       2       4       8
+0x7ffffffeda70: 16      32
+</code></pre>
+<p>而且它的下一句话完全是给我们提示了</p>
+<pre><code class="language-C">0x400f0a &lt;phase_2+14&gt;   cmpl   $0x1,(%rsp)
+</code></pre>
+<p>这句话说明输入的第一个数要求是1，我只能说很良心了</p>
+<p>然后的关键在这里</p>
+<pre><code class="language-C">0x400f17 &lt;phase_2+27&gt;   mov    -0x4(%rbx),%eax
+0x400f1a &lt;phase_2+30&gt;   add    %eax,%eax
+0x400f1c &lt;phase_2+32&gt;   cmp    %eax,(%rbx)
+0x400f1e &lt;phase_2+34&gt;   je     0x400f25 &lt;phase_2+41&gt;
+0x400f20 &lt;phase_2+36&gt;   callq  0x40143a &lt;explode_bomb&gt;
+0x400f25 &lt;phase_2+41&gt;   add    $0x4,%rbx
+0x400f29 &lt;phase_2+45&gt;   cmp    %rbp,%rbx
+0x400f2c &lt;phase_2+48&gt;   jne    0x400f17 &lt;phase_2+27&gt;
+0x400f2e &lt;phase_2+50&gt;   jmp    0x400f3c &lt;phase_2+64&gt;
+0x400f30 &lt;phase_2+52&gt;   lea    0x4(%rsp),%rbx
+0x400f35 &lt;phase_2+57&gt;   lea    0x18(%rsp),%rbp
+0x400f3a &lt;phase_2+62&gt;   jmp    0x400f17 &lt;phase_2+27&gt;
+</code></pre>
+<p>我都已经把关键部分提取出来了，答案也告诉你，推导一定很容易吧</p>
+<h4 id="_4">答案</h4>
+<p>1 2 4 8 16 32</p>
+<blockquote>
+<p>That's number 2.  Keep going!</p>
+</blockquote>
+<h3 id="3-phase_3">3. phase_3</h3>
+<blockquote>
+<p>I guess this is too easy so far.  Some more complex code will confuse people.</p>
+</blockquote>
+<h4 id="_5">开解</h4>
+<p>第3题有点点莫名其妙，看起来好像是一条分叉路，输入两个参数，第一个参数是选择你走哪条路，第二个参数是解，这里仅给出第一个参数为1的解</p>
+<pre><code class="language-C">0x400f75 &lt;phase_3+50&gt;   jmpq   *0x402470(,%rax,8)
+</code></pre>
+<p>如果输入1，1会被存入%rax，则会跳转到这个位置</p>
+<pre><code class="language-C">0x400fb9 &lt;phase_3+118&gt;  mov    $0x137,%eax
+0x400fbe &lt;phase_3+123&gt;  cmp    0xc(%rsp),%eax
+0x400fc2 &lt;phase_3+127&gt;  je     0x400fc9 &lt;phase_3+134&gt;
+0x400fc4 &lt;phase_3+129&gt;  callq  0x40143a &lt;explode_bomb&gt;
+</code></pre>
+<p>然后很简单，这里明说了第二个参数是0x137，即十进制311，bomb解决了</p>
+<h4 id="_6">答案</h4>
+<p>1 311</p>
+<blockquote>
+<p>Halfway there!</p>
+</blockquote>
+<h3 id="4-phase_4">4. phase_4</h3>
+<blockquote>
+<p>Oh yeah?  Well, how good is your math?  Try on this saucy problem!</p>
+</blockquote>
+<h4 id="_7">开解</h4>
+<p>这题过的有点懵懵的，大部分我都看懂了，就一个地方没看懂，就是一个右移操作除了2，但我没找到为什么要除以2，明明 cl 是0啊</p>
+<p>这里简单说明一下我的想法吧，这一行代码是关键</p>
+<pre><code class="language-C">0x40103a &lt;phase_4+46&gt;   mov    $0xe,%edx
+0x40103f &lt;phase_4+51&gt;   mov    $0x0,%esi
+</code></pre>
+<p>这句话告诉了我们传入 func4() 的第二个参数是14，第三个参数是0，那你可能要问第一个参数呢？第一个参数是我们键盘输入的第一个参数，然后我把里面的 func4() 翻译为了C语言代码</p>
+<pre><code class="language-C">int func4(int edi, int edx, int esi) {
+    unsigned int eax = edx - esi;
+    unsigned int ecx = eax &gt;&gt; 31;
+    eax = (eax + ecx) &gt;&gt; ecx;
+    ecx = eax + esi;
+    if (ecx &gt; edi) {
+        func4(edi, ecx - 1, esi);
+        eax = eax + eax;
+        return eax;
+    }
+    eax = 0;
+    if (ecx &lt; edi) {
+        func4(edi, edx, ecx + 1);
+        eax = eax + eax + 1;
+    }
+    return eax;
+}
+</code></pre>
+<p>这个代码翻译的不一定对（而且第四行的右移操作在实践中证明我是错的，可能我还得看看别人的攻略学习学习），但大体上是对的，还是可以参考一下的。</p>
+<p>结合上下文，这个函数的目的就是返回0，如何返回0呢？要求 ecx == edi，已知 edx 初始化为14，esi 初始化为0，经过计算到达 if 判断时，ecx 的值是7，那么 edi 作为我们的输入最简单的情况就是为7。</p>
+<p>最后，跳出 func4() 后还能发现第二个输入被限定为0，那么答案就呼之欲出了。</p>
+<h4 id="_8">答案</h4>
+<p>7 0</p>
+<blockquote>
+<p>So you got that one.  Try this one.</p>
+</blockquote>
+<h3 id="5-phase_5">5. phase_5</h3>
+<blockquote>
+<p>Round and 'round in memory we go, where we stop, the bomb blows!</p>
+</blockquote>
+<h4 id="_9">开解</h4>
+<p>这题非常有意思，里面涉及到了一个叫金丝雀值的东西，可是和解题倒是没半毛钱关系（</p>
+<p>粗略浏览一下代码，发现我们的输入被存在了 rbx 里面，string_length也明说了要输入长度为6的字符串</p>
+<pre><code class="language-C">(gdb) x/s $rbx
+0x6038c0 &lt;input_strings+320&gt;:   &quot;IONEFG&quot;
+</code></pre>
+<p>然后核心的部分就来了</p>
+<pre><code class="language-C">0x40108b &lt;phase_5+41&gt;   movzbl (%rbx,%rax,1),%ecx
+0x40108f &lt;phase_5+45&gt;   mov    %cl,(%rsp)
+0x401092 &lt;phase_5+48&gt;   mov    (%rsp),%rdx
+0x401096 &lt;phase_5+52&gt;   and    $0xf,%edx
+0x401099 &lt;phase_5+55&gt;   movzbl 0x4024b0(%rdx),%edx
+0x4010a0 &lt;phase_5+62&gt;   mov    %dl,0x10(%rsp,%rax,1)
+0x4010a4 &lt;phase_5+66&gt;   add    $0x1,%rax
+0x4010a8 &lt;phase_5+70&gt;   cmp    $0x6,%rax
+0x4010ac &lt;phase_5+74&gt;   jne    0x40108b &lt;phase_5+41&gt;
+</code></pre>
+<p>什么意思呢？就是 rax 一开始被初始化为0，每次循环加1，直到加到6跳出循环。那么这个循环是干什么事情的呢？可以看到 rbx + rax 的值被赋给了ecx，然后一直到第四行，把这个值截断成4位二进制数，再从内存0x4024b0读取一个字符赋给 edx，然后存储到 rsp + 10 + rax 的位置，那我们来看看0x4024b0里面存储了什么</p>
+<pre><code class="language-C">(gdb) x/s 0x4024b0
+0x4024b0 &lt;array.3449&gt;:  &quot;maduiersnfotvbylSo you think you can stop the bomb with ctrl-c, do you?&quot;
+</code></pre>
+<p>一段奇怪的乱码，我们要从这些乱码中选择我们需要的字符，那需要的字符是什么捏？</p>
+<p>且看</p>
+<pre><code class="language-C">0x4010ae &lt;phase_5+76&gt;   movb   $0x0,0x16(%rsp)
+0x4010b3 &lt;phase_5+81&gt;   mov    $0x40245e,%esi
+0x4010b8 &lt;phase_5+86&gt;   lea    0x10(%rsp),%rdi
+0x4010bd &lt;phase_5+91&gt;   callq  0x401338 &lt;strings_not_equal&gt;
+</code></pre>
+<p>去到0x40245e中，一切拨云见日</p>
+<pre><code class="language-C">(gdb) x/s 0x40245e
+0x40245e:       &quot;flyers&quot;
+</code></pre>
+<p>答案就出来了</p>
+<blockquote>
+<p>ASCII: 9 1514 6 7 8</p>
+</blockquote>
+<h4 id="_10">答案</h4>
+<p>IONEFG</p>
+<blockquote>
+<p>Good work!  On to the next...</p>
+</blockquote>
+<h3 id="6-phase_6">6. phase_6</h3>
+<blockquote>
+<p>This phase will never be used, since no one will get past the earlier ones.  But just in case, make this one extra hard.</p>
+</blockquote>
+<h4 id="_11">开解</h4>
+<p>花了我好久，原来还挺简单的，只是我自己在跟自己浪费时间:sweat_smile:</p>
+<p>简单来说分为以下步骤</p>
+<ol>
+<li>
+<p>读入6个数字，这6个数字会依次减一（不改变内存里面的值），然后和5比较，大于5就寄了</p>
+</li>
+<li>
+<p>然后这6个数字，会检查是否有重复，检查方式是：第一个数字选择，和其他数字对比是否相等，然后选择第二个重复上述操作，以此类推</p>
+</li>
+<li>
+<p>然后 %ecx 被赋值7，然后每个原来你输入的东西都要用这个7去减（坑你的）</p>
+</li>
+<li>
+<p>最难的部分来了，你要看出一个叫做链表的东西</p>
+</li>
+</ol>
+<blockquote>
+<p>可以看出 0x6032d0 这个地址里面存了些东西，我一开始用十进制去看，完全摸不着头脑。偶然一次用16进制取看了看</p>
+<p><code>C
+(gdb) x/12ag 0x6032d0
+0x6032d0 &lt;node1&gt;:       0x10000014c     0x6032e0 &lt;node2&gt;
+0x6032e0 &lt;node2&gt;:       0x2000000a8     0x6032f0 &lt;node3&gt;
+0x6032f0 &lt;node3&gt;:       0x30000039c     0x603300 &lt;node4&gt;
+0x603300 &lt;node4&gt;:       0x4000002b3     0x603310 &lt;node5&gt;
+0x603310 &lt;node5&gt;:       0x5000001dd     0x603320 &lt;node6&gt;
+0x603320 &lt;node6&gt;:       0x6000001bb     0x0</code></p>
+<p>我超，0x6032e0好眼熟啊，等等，后面怎么跟了个<node2>是不是显示出问题了，我用十进制试一下。。。哎？不会显示node2啊，怎么十六进制就显示错误了。。。等等，node?我超！！</p>
+<p>所以这是个链表！！！</p>
+</blockquote>
+<ol>
+<li>
+<p>链表里的下标全部存到了 $rsp + 0x20 的位置（不信你试试啊），然后他找到0x20和0x28的位置，修改0x6032d0内存中链表的第二个量，即下个位置的链接，把0行0x28接到了0x20后面，嘿嘿，简单来说就是链表的顺序被改变了（当然尾部仍然指向0）</p>
+</li>
+<li>
+<p>改变后，要干什么呢？看源码可以看出他把每两个相邻的节点比大小，如果前一个比后一个大，就继续运行，否则BOOM!!!，那么答案不就出来了吗</p>
+</li>
+</ol>
+<pre><code class="language-C">x/12ag 0x6032d0
+
+(gdb) x/12ag 0x6032d0
+
+0x6032d0 &lt;node1&gt;:       0x10000014c     0x6032e0 &lt;node2&gt;
+0x6032e0 &lt;node2&gt;:       0x2000000a8     0x6032f0 &lt;node3&gt;
+0x6032f0 &lt;node3&gt;:       0x30000039c     0x603300 &lt;node4&gt;
+0x603300 &lt;node4&gt;:       0x4000002b3     0x603310 &lt;node5&gt;
+0x603310 &lt;node5&gt;:       0x5000001dd     0x603320 &lt;node6&gt;
+0x603320 &lt;node6&gt;:       0x6000001bb     0x0
+
+x/6ag $rsp + 0x20
+
+0x7ffffffeda60: 0x6032d0 &lt;node1&gt;        0x6032e0 &lt;node2&gt;
+0x7ffffffeda70: 0x6032f0 &lt;node3&gt;        0x603300 &lt;node4&gt;
+0x7ffffffeda80: 0x603310 &lt;node5&gt;        0x603320 &lt;node6&gt;
+</code></pre>
+<h4 id="_12">答案</h4>
+<p>4 3 2 1 6 5</p>
+<blockquote>
+<p>Congratulations! You've defused the bomb!</p>
+</blockquote>
+<h2 id="the-end">The End</h2>
+<p>是开始？还是暂歇？</p>
+<p>下一站：Attack Lab</p></div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/prism.js"></script>
+
+    
+    </div>
+</body>
+</html>

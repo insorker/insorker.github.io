@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The CSAPP Attack Lab</title>
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link href="/css/prism.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            <h1>The CSAPP Attack Lab</h1>
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | Posted on 2021-12-28</span>
+        </div>
+    </div>
+    <div><p>﻿---
+date: 2021-12-20</p>
+<hr />
+<p>﻿# The CS:APP Attack Lab</p>
+<ul>
+<li>insorker</li>
+<li>2021/12/20</li>
+</ul>
+<h2 id="hello">Hello</h2>
+<p>和上一个lab隔了好久啊，因为对汇编做出了阴影了，而且急于了解网络编程，所以直接往后面看了。。。然后，后面也看的差不多了，滚回来补lab推进度了。</p>
+<h2 id="introduction">Introduction</h2>
+<p>这个lab说来很惭愧，我没能全靠自己走下来，一边做一边参考别人的笔记，只能说确实学的不扎实，很多概念还是搞不明白。</p>
+<p>🤚会者不难</p>
+<h2 id="how-to-get-start">How to get start</h2>
+<p>完全推荐官方教程，而且必须从官方教程入手，不然你完全无从开始<a href="http://csapp.cs.cmu.edu/3e/attacklab.pdf">attacklab.pdf</a></p>
+<p>参考<a href="https://blog.csdn.net/qq_45476172/article/details/121430101?spm=1001.2014.3001.5501">The CS:APP Bomb Lab_这就很帅的博客-CSDN博客</a></p>
+<p>另外，objdump也请自学一下</p>
+<p>🤚会者不难</p>
+<h2 id="problem">Problem</h2>
+<blockquote>
+<p>这次我也不太想细讲了，自己也是偷师别人的，况且别人的笔记已经很好了</p>
+</blockquote>
+<h3 id="ctarget">ctarget</h3>
+<ol>
+<li>Level 1</li>
+</ol>
+<p>很简单的题，关键看你理不理解概念（指ret）</p>
+<p>详见书上P166关于ret的解释，ret相当于把栈帧底部的地址给返回了，所以覆盖这个地址就行了。</p>
+<p>另外，BUFFER_SIZE的大小也并不一定是40，但不影响做题，详见书上P195最后，和P196上面的那张图片。</p>
+<ol>
+<li>Level 2</li>
+</ol>
+<p>这里我还是有点疑问</p>
+<ol>
+<li>按照书上的说法是存在栈随机化的操作的，但这里没有</li>
+<li>push到底把这个地址塞到哪里去了啊</li>
+</ol>
+<p>上面的问题看别人的笔记并没有给出解释，表示很疑惑</p>
+<ol>
+<li>Level 3</li>
+</ol>
+<p>关键是字符串的位置选在哪里，选在上一个栈帧里面肯定不会有错，但是为什么放在buf里不行我还是没想明白。</p>
+<h3 id="rtarget">rtarget</h3>
+<ol>
+<li>Level 2</li>
+</ol>
+<p>意思就是你没办法去执行你的栈注入的代码了，你只能通过不断的跳转函数，执行函数里面的语句（听起来确实挺不靠谱的），去找到你想要的代码。简而言之，就是就地取材，那么根据你要找的汇编代码，比如</p>
+<p><code>The byte sequence 48 89 c7 encodes the instruction movq %rax, %rdi.</code></p>
+<p>在vim里面</p>
+<p><code>/48 89 c7</code></p>
+<p>可以找到三个处引用（其实四处），然后三个里面只有一个在48 89 c7的后面借了一个90（即nop），所以。。。</p>
+<ol>
+<li>Level 3</li>
+</ol>
+<blockquote>
+<p>吐槽一下，居然被我找到了语法错误</p>
+<p>you were able inject a type of program 少了个 to 吧</p>
+</blockquote>
+<p>直接放弃，官方说要花不少时间，加上我前面那么多问题没解决，而且学了估计很快就忘了（其实不会的，我到现在还记得Lab1😭😭😭）</p>
+<p>对不起，羊驼，我被你爆啥了，技术不行🙇🙇🙇</p>
+<h2 id="the-end">The End</h2>
+<p>这把确实拉了</p>
+<p>下一站：Architecture Lab</p></div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/prism.js"></script>
+
+    
+    </div>
+</body>
+</html>
