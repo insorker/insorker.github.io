@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The CSAPP Cache Lab</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link href="/css/prism.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            <h1>The CSAPP Cache Lab</h1>
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | Posted on 2022-01-01</span>
+        </div>
+    </div>
+    <div><p>﻿# The CSAPP Cache Lab</p>
+<ul>
+<li>insorker</li>
+<li>2022/1/1</li>
+</ul>
+<h2 id="hello">Hello</h2>
+<p>做完lab是去年12月24号，过了很久才写这篇笔记说实话是有些不应该的，但谁叫没人催我呢</p>
+<p>嘿嘿</p>
+<h2 id="introduction">Introduction</h2>
+<p>这个lab可以说代码量比之前提高了好多，但是代码本身很简单，而且也不要求你去读他提供的源码，从码代码的角度不存在太大的难点。</p>
+<p>那么这个lab的难点在哪？看你理不理解概念和一点小学初中奥赛思维。</p>
+<h2 id="how-to-start">How to start</h2>
+<p>不存在How to start，去看官方的pdf，看官方的PPT就基本上够了</p>
+<p><a href="http://csapp.cs.cmu.edu/3e/cachelab.pdf">http://csapp.cs.cmu.edu/3e/cachelab.pdf</a></p>
+<p><a href="http://www.cs.cmu.edu/afs/cs/academic/class/15213-f15/www/recitations/rec07.pdf">http://www.cs.cmu.edu/afs/cs/academic/class/15213-f15/www/recitations/rec07.pdf</a></p>
+<h2 id="problem">Problem</h2>
+<h3 id="part-a">Part A</h3>
+<p>这里的要求不是要我们写一个cache，而是模拟计算一个cache的行为。</p>
+<p>什么意思呢？就是代码不需要做实际存储，我们只要知道hit, miss, eviction发生了多少次。</p>
+<p>什么意思呢？就是只要能明白hit, miss, eviction的逻辑就可以了。</p>
+<p>好的，那么逻辑是什么，我在我的代码里注释了一下（因为看别人的攻略也没能把意思表示清楚，我也只能这么解释一下）</p>
+<pre><code class="language-C">switch (tl.op) {
+        case 'I':
+                continue;
+        case 'L':
+                /* 首先搞清楚概念，这个load是什么东西,store又是什么 */
+                /* load: 从内存中读取 */
+                if (cache_load(ca)) {
+                        /* store: 内存中没有，从磁盘缓存 */
+                        cache_store(ca);
+                }
+                /* 也就是说这儿的&quot;L&quot;很简单，就是CPU从内存中读取，不命中就从磁盘读到内存，然后在读到CPU */
+                break;
+        case 'S':
+                /* 从CPU中存到内存中 */
+                /* 首先判断，内存中是否有对应block，如果有，那么从cpu存到内存中 */
+                /* 但是由于存的过程不影响hit, miss, eviction，所以跳过store */
+                if (cache_load(ca)) {
+                        /* 如果内存中没有对应block，那么要从磁盘缓存 */
+                        cache_store(ca);
+                }
+                /* 这儿的存是从CPU存到内存，但是请注意，这儿分两种情况 */
+                /*     1. 不命中，那么要先从磁盘读到内存（和&quot;L&quot;的操作是一样的） */
+                /*     2. 命中，等价于1.结束，不需要任何操作 */
+                /* 然后，从CPU中存到内存中，但是问题是从CPU写到内存不涉及任何hit,miss,eviction */
+                /* 所以就很扯淡了，导致和前一个操作一模一样 */
+                break;
+        case 'M':
+                /* 题目好心的告诉了我们modify等价于先load，后store */
+                if (cache_load(ca)) {
+                        cache_store(ca);
+                }
+                if (cache_load(ca)) {
+                        cache_store(ca);
+                }
+                break;
+}
+</code></pre>
+<p>然后就是cache的具体实现，PPT里面给了一些结构可以参考一下，比较简单。</p>
+<pre><code class="language-C">static unsigned s, E, b, S;
+static char trace_file[200];
+static unsigned hit_count, miss_count, eviction_count;
+
+typedef struct cache_line {
+        int valid_bit;
+        int tag_bits;
+        CSIM_INT stp_cnt;
+}Cache_Line;
+Cache_Line ucache, **cache;
+
+typedef struct trace_line {
+        char op;
+        CSIM_INT addr;
+        int size;
+}Trace_Line;
+
+typedef struct cache_address {
+        int tag_bits;
+        int set_index;
+        int block_offset;
+}Cache_Address;
+</code></pre>
+<p>还有一个就是如何选择牺牲页，牺牲页PPT里给了两个问句：队列？时间戳？</p>
+<p>这里选择了用时间戳的做法，当然我的实现方法是有问题的，如果一个block长期不被命中，那么时间戳有可能变为负的，当然在测试样例中没有出问题就算了。</p>
+<p>其他的工作不过是搬砖吧了，Google一下都可以出来。我的完整代码如下：</p>
+<pre><code class="language-C">#include &quot;cachelab.h&quot;
+#include &lt;unistd.h&gt;
+#include &lt;getopt.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;malloc.h&gt;
+
+#define CSIM_DEBUG 0
+#if CSIM_DEBUG
+#define db_cache_address 1
+#define db_printSummary 1
+#define db_print_cache_line 1
+#endif
+
+typedef unsigned long long CSIM_INT;
+
+static unsigned s, E, b, S;
+static char trace_file[200];
+static unsigned hit_count, miss_count, eviction_count;
+
+typedef struct cache_line {
+    int valid_bit;
+    int tag_bits;
+    CSIM_INT stp_cnt;
+}Cache_Line;
+Cache_Line ucache, **cache;
+
+typedef struct trace_line {
+    char op;
+    CSIM_INT addr;
+    int size;
+}Trace_Line;
+
+typedef struct cache_address {
+    int tag_bits;
+    int set_index;
+    int block_offset;
+}Cache_Address;
+
+static void print_help(char** argv);
+static void optarg_check(char* optarg, char** argv);
+static void sEb_check(char** argv);
+static void parse_args(int argc, char** argv);
+
+void cache_constructor();
+void cache_destructor();
+
+void parse_trace_line();
+void parse_trace_address(CSIM_INT addr, Cache_Address* ca); 
+int cache_load(Cache_Address ca);
+int cache_store(Cache_Address ca);
+
+void update_stp();
+
+int main(int argc, char** argv)
+{
+    parse_args(argc, argv);
+
+    cache_constructor();
+
+    parse_trace_line();
+
+    cache_destructor();
+
+    printSummary(hit_count, miss_count, eviction_count);
+
+    return 0;
+}
+
+static void print_help(char** argv) {
+    printf(&quot;Usage: %s [-hv] -s &lt;num&gt; -E &lt;num&gt; -b &lt;num&gt; -t &lt;file&gt;\n&quot;
+            &quot;Options:\n&quot;
+            &quot;  -h         Print this help message.\n&quot;
+            &quot;  -v         Optional verbose flag.\n&quot;
+            &quot;  -s &lt;num&gt;   Number of set index bits.\n&quot;
+            &quot;  -E &lt;num&gt;   Number of lines per set.\n&quot;
+            &quot;  -b &lt;num&gt;   Number of block offset bits.\n&quot;
+            &quot;  -t &lt;file&gt;  Trace file.\n\n&quot;
+            &quot;Examples:\n&quot;
+            &quot;  linux&gt;  %s -s 4 -E 1 -b 4 -t traces/yi.trace\n&quot;
+            &quot;  linux&gt;  %s -v -s 8 -E 2 -b 4 -t traces/yi.trace\n&quot;,
+            argv[0], argv[0], argv[0]);
+}
+
+
+static void optarg_check(char* optarg, char** argv) {
+    if (optarg == NULL) {
+        printf(&quot;%s: Missing required command line argument\n&quot;, argv[0]);
+        print_help(argv);
+        exit(0);
+    }
+}
+
+static void sEb_check(char** argv) {
+    if (s &lt;= 0 || E &lt;= 0 || b &lt;= 0) {
+        printf(&quot;%s: Missing required command line argument\n&quot;, argv[0]);
+        print_help(argv);
+        exit(0);
+    }
+}
+
+static void parse_args(int argc, char** argv) {
+    int opt, trace_disp = 0;
+    while ( (opt = getopt(argc, argv, &quot;hvs:E:b:t:&quot;)) != -1 ) {
+        switch (opt) {
+            case 's': optarg_check(optarg, argv); sscanf(optarg, &quot;%u&quot;, &amp;s); break;
+            case 'E': optarg_check(optarg, argv); sscanf(optarg, &quot;%u&quot;, &amp;E); break;
+            case 'b': optarg_check(optarg, argv); sscanf(optarg, &quot;%u&quot;, &amp;b); break;
+            case 't': optarg_check(optarg, argv); sscanf(optarg, &quot;%s&quot;, trace_file); break;
+            case 'v': trace_disp = 1; break;
+            case 'h':
+            default:
+                print_help(argv); exit(0);
+        }
+    }
+    sEb_check(argv);
+    S = 1 &lt;&lt; s;
+
+    FILE* pFile = fopen(trace_file, &quot;r&quot;);
+
+    if (pFile == NULL) {
+        printf(&quot;%s: No such file or director\n&quot;, trace_file);
+        exit(0);
+    }
+    else if (trace_disp) {
+        Trace_Line trace;
+        while (fscanf(pFile, &quot; %c %llx,%d&quot;, &amp;trace.op, &amp;trace.addr, &amp;trace.size) &gt; 0) {
+            printf(&quot;%c %llx,%d\n&quot;, trace.op, trace.addr, trace.size);
+        }
+    }
+
+    fclose(pFile);
+}
+
+void cache_constructor() {
+    cache = (Cache_Line**)malloc(sizeof(Cache_Line*) * S);
+
+    for (int i = 0; i &lt; S; i ++ ) {
+        cache[i] = (Cache_Line*)malloc(sizeof(Cache_Line) * E);
+
+        for (int j = 0; j &lt; E; j ++ ) {
+            cache[i][j].valid_bit = 0;
+            cache[i][j].tag_bits = 0;
+            cache[i][j].stp_cnt = 0;
+        }
+    }
+}
+
+void cache_destructor() {
+    for (int i = 0; i &lt; S; i ++ )
+        free(cache[i]);
+    free(cache);
+}
+
+void parse_trace_line() {
+    FILE* pFile = fopen(trace_file, &quot;r&quot;);
+
+    Trace_Line tl;
+    Cache_Address ca;
+    while (fscanf(pFile, &quot; %c %llx,%d&quot;, &amp;tl.op, &amp;tl.addr, &amp;tl.size) &gt; 1) {
+        parse_trace_address(tl.addr, &amp;ca);
+        #if db_cache_address
+            printf(&quot;%c %llx\n&quot;, tl.op, tl.addr);
+            printf(&quot;%d %d %d\n&quot;, ca.tag_bits, ca.set_index, ca.block_offset);
+        #endif
+
+        switch (tl.op) {
+            case 'I':
+                continue;
+            case 'L':
+                /* 首先搞清楚概念，这个load是什么东西,store又是什么 */
+                /* load: 从内存中读取 */
+                if (cache_load(ca)) {
+                    /* store: 内存中没有，从磁盘缓存 */
+                    cache_store(ca);
+                }
+                /* 也就是说这儿的&quot;L&quot;很简单，就是CPU从内存中读取，不命中就从磁盘读到内存，然后在读到CPU */
+                break;
+            case 'S':
+                /* 从CPU中存到内存中 */
+                /* 首先判断，内存中是否有对应block，如果有，那么从cpu存到内存中 */
+                /* 但是由于存的过程不影响hit, miss, eviction，所以跳过store */
+                if (cache_load(ca)) {
+                    /* 如果内存中没有对应block，那么要从磁盘缓存 */
+                    cache_store(ca);
+                }
+                /* 这儿的存是从CPU存到内存，但是请注意，这儿分两种情况 */
+                /*     1. 不命中，那么要先从磁盘读到内存（和&quot;L&quot;的操作是一样的） */
+                /*     2. 命中，等价于1.结束，不需要任何操作 */
+                /* 然后，从CPU中存到内存中，但是问题是从CPU写到内存不涉及任何hit,miss,eviction */
+                /* 所以就很扯淡了，导致和前一个操作一模一样 */
+                break;
+            case 'M':
+                /* 题目好心的告诉了我们modify等价于先load，后store */
+                if (cache_load(ca)) {
+                    cache_store(ca);
+                }
+                if (cache_load(ca)) {
+                    cache_store(ca);
+                }
+                break;
+        }
+        update_stp();
+
+        #if db_print_cache_line
+            printf(&quot;line %d: &quot;, ca.set_index);
+            for (int i = 0; i &lt; E; i ++ )
+                printf(&quot;%d &quot;, cache[ca.set_index][i].valid_bit);
+            printf(&quot;\n&quot;);
+        #endif
+
+        #if db_printSummary
+            printSummary(hit_count, miss_count, eviction_count);
+            printf(&quot;\n&quot;);
+        #endif
+    }
+
+    fclose(pFile);
+}
+
+void parse_trace_address(CSIM_INT addr, Cache_Address* ca) {
+    ca-&gt;block_offset = addr &gt;&gt; 0 &amp; (CSIM_INT)-1 &gt;&gt; (64 - b);
+    ca-&gt;set_index = addr &gt;&gt; b &amp; (CSIM_INT)-1 &gt;&gt; (64 - s);
+    ca-&gt;tag_bits = addr &gt;&gt; (b + s) &amp; (CSIM_INT)-1 &gt;&gt; (b + s);
+}
+
+int cache_load(Cache_Address ca) {
+    Cache_Line* cl = cache[ca.set_index];
+
+    for (int i = 0; i &lt; E; i ++ ) {
+        if (cl[i].valid_bit == 0) continue;
+        if (cl[i].tag_bits != ca.tag_bits) continue;
+
+        cl[i].stp_cnt = 0;
+        hit_count ++ ;
+        return 0;
+    }
+
+    miss_count ++ ;
+    return 1;
+}
+
+int cache_store(Cache_Address ca) {
+    Cache_Line* cl = cache[ca.set_index];
+    Cache_Line* eviction;
+
+    int has_blank = 0;
+    for (int i = 0; i &lt; E; i ++ ) {
+        if (cl[i].valid_bit == 0) {
+            eviction = &amp;cl[i];
+            has_blank = 1;
+            break;
+        }
+    }
+
+    if (has_blank == 0) {
+        eviction_count ++ ;
+
+        eviction = &amp;cl[0];
+        for (int i = 1; i &lt; E; i ++ ) {
+            if (cl[i].stp_cnt &gt; eviction-&gt;stp_cnt) {
+                eviction = &amp;cl[i];
+                continue;
+            }
+        }
+    }
+
+    eviction-&gt;valid_bit = 1;
+    eviction-&gt;tag_bits = ca.tag_bits;
+    eviction-&gt;stp_cnt = 0;
+
+    return 0;
+}
+
+void update_stp() {
+    for (int i = 0; i &lt; S; i ++ )
+        for (int j = 0; j &lt; E; j ++ )
+            if (cache[i][j].valid_bit == 1)
+                cache[i][j].stp_cnt ++ ;
+}
+</code></pre>
+<p>写的长一点是为了整体好看一点(#^ . ^#)</p>
+<h3 id="part-b">Part B</h3>
+<p>这个问看起来非常简单，但是实际做起来还是非常难的</p>
+<p>如果给三个小问题按照难度排个序，那么结果是 64×64 &gt; 32 ×32 &gt; 61 × 67</p>
+<p>不过做题还是得按照顺序做</p>
+<h4 id="3232">32×32</h4>
+<p>这里先贴出一位大佬的分析</p>
+<p><a href="https://yangtau.me/computer-system/csapp-cache.html">https://yangtau.me/computer-system/csapp-cache.html</a></p>
+<p>然后，兄弟，看我回蓝：</p>
+<p>首先分析一下能达到的最好情况，32组，每组32字节，能存8个int，那么理论上进行分块最大（正方形）能分个8×8的块</p>
+<p>那么每次读入8×8至少16次不命中（8行A + 8行B），然后32×32又可以分出4×4个8×8的小块</p>
+<p>那么理论上最小值就是16×16 == 256次miss</p>
+<p>那么实操一下，结果却得到了300多次miss</p>
+<pre><code class="language-C">#if demo0
+    int i, j;
+
+    for (i = 0; i &lt; 8; i ++ )
+        for (j = 0; j &lt; 8; j ++ )
+            *(pb + j * n + i) = *(pa + i * n + j);
+#endif
+</code></pre>
+<p>究其原因，发现32组读入8组A、8组B，并不是如同童话般各自占一行，而是发生了冲突</p>
+<p>那么冲突的原因是什么呢？</p>
+<p>让我们想想，32×32，每行有32个int，32 / 8 = 4，那么矩阵中的第0行将会映射到cache中前4组，同理第1行会映射到第4组至第7组。。。一直到第7行映射到第28组至31组（是不是特别巧，正好cache一共32组）</p>
+<p>那么矩阵A和矩阵B之间就发生了冲突，比如矩阵A的第0行读入，然后写入矩阵B第0行就把A给覆盖了，需要重新读入A的第0行，这就造成了多余的miss，同理其他</p>
+<p>这时就有一种非常取巧的解决方法，就是把矩阵A的第0行存入寄存器（这样就不会被矩阵B覆盖了），然后就非常轻松的解决了冲突</p>
+<pre><code class="language-C">#if demo1
+    int i;
+    int x0, x1, x2, x3, x4, x5, x6, x7;
+
+    for (i = 0; i &lt; s; i ++ ) {
+        x0 = *(pa + i * n + 0);
+        x1 = *(pa + i * n + 1);
+        x2 = *(pa + i * n + 2);
+        x3 = *(pa + i * n + 3);
+        x4 = *(pa + i * n + 4);
+        x5 = *(pa + i * n + 5);
+        x6 = *(pa + i * n + 6);
+        x7 = *(pa + i * n + 7);
+
+        *(pb + 0 * n + i) = x0;
+        *(pb + 1 * n + i) = x1;
+        *(pb + 2 * n + i) = x2;
+        *(pb + 3 * n + i) = x3;
+        *(pb + 4 * n + i) = x4;
+        *(pb + 5 * n + i) = x5;
+        *(pb + 6 * n + i) = x6;
+        *(pb + 7 * n + i) = x7;
+    }
+#endif
+</code></pre>
+<p>但是请等一下，结果仍然显示287次miss（我不记得具体数字了），这是什么原因呢？</p>
+<p>请你再想一想刚才的问题，冲突真的解决了吗？我们发现矩阵B被读入后，我们想读入矩阵A就必然会覆盖矩阵B（仅存在在对角线上），这造成了一些多的miss</p>
+<p>虽然答案已经满分了，但我们还是想再冲一冲，于是一种非常神奇的方法出现了，见下图</p>
+<blockquote>
+<p><strong>说明</strong></p>
+<p>网格：
+  网格对应一个cache
+  行对应set，即s=3，共8组
+  列对应block，默认E=1，b=5，即block大小为32字节，可存储8个int，故8列
+蓝色：
+  矩阵A被存储入cache
+红色：
+  矩阵B被存储入cache
+黄色：
+  已翻转的坐标
+坐标：
+  网格坐标同二维数组，左上角为0,0
+  绿色数组（无论深浅），均显示的是矩阵A存入的坐标
+  默认矩阵B如果被存入（即网格标红），则其坐标与网格坐标一致</p>
+</blockquote>
+<p><img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/0ea18297f2254d0baa6fa62adb845840.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" />
+<img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/5a852005ffaf44aeaeda139adf1ab1dd.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_19,color_FFFFFF,t_70,g_se,x_16#pic_center" />
+<img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/6c5907559b424bb39a898f057ce1a0fe.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" />
+<img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/665545c581b041319b069dd2aa820ce8.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" />
+<img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/b96985c7da6244d0bce2dbe6ed67fbcd.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_19,color_FFFFFF,t_70,g_se,x_16#pic_center" />
+<img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/8f69cf51db8e4e9dbe036c1911d87548.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" />
+<img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/966b54dea50a4c24a55668a38a635f25.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_19,color_FFFFFF,t_70,g_se,x_16#pic_center" />
+<img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/3bc54679647c45ecb089ada2f59c7d00.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" />
+<img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/e0f3754aa3ed43e0a284d97639ad7d24.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16#pic_center" /></p>
+<p>这样就OK了</p>
+<p>代码如下</p>
+<pre><code class="language-C">#if fastest32
+    int i, j, tmp;
+    int x0, x1, x2, x3, x4, x5, x6, x7;
+
+    for (i = 0; i &lt; s; i ++ ) {
+        x0 = *(pa + i * n + 0);
+        x1 = *(pa + i * n + 1);
+        x2 = *(pa + i * n + 2);
+        x3 = *(pa + i * n + 3);
+        x4 = *(pa + i * n + 4);
+        x5 = *(pa + i * n + 5);
+        x6 = *(pa + i * n + 6);
+        x7 = *(pa + i * n + 7);
+
+        *(pb + i * n + 0) = x0;
+        *(pb + i * n + 1) = x1;
+        *(pb + i * n + 2) = x2;
+        *(pb + i * n + 3) = x3;
+        *(pb + i * n + 4) = x4;
+        *(pb + i * n + 5) = x5;
+        *(pb + i * n + 6) = x6;
+        *(pb + i * n + 7) = x7;
+
+        for (j = 0; 2 * j &lt; i; j ++ ) {
+            tmp = *(pb + j * n + i - j);
+            *(pb + j * n + i - j) = *(pb + (i - j) * n + j);
+            *(pb + (i - j) * n + j) = tmp;
+        }
+    }
+    for (i = s; i &lt; 2 * s; i ++ ) {
+        for (j = i - s + 1; 2 * j &lt; i; j ++ ) {
+            tmp = *(pb + j * n + i - j);
+            *(pb + j * n + i - j) = *(pb + (i - j) * n + j);
+            *(pb + (i - j) * n + j) = tmp;
+        }
+    }
+#endif
+</code></pre>
+<h4 id="6464">64×64</h4>
+<p>这个已经超过了我的能力范围，我只能勉强看懂别人的思路</p>
+<h4 id="6167">61×67</h4>
+<p>这个又过于简单，因为这里面也没什么规律，一个小block一个小block的试试就行了</p>
+<h2 id="the-end">The End</h2>
+<p>痛快</p>
+<p>下一站：Malloc Lab</p></div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/prism.js"></script>
+
+    
+    </div>
+</body>
+</html>
