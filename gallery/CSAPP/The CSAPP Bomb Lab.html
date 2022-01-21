@@ -78,22 +78,22 @@
 <ol>
 <li>
 <p>在<code>input = read_line();</code>前敲下断点
-   <img alt="" src="https://img-blog.csdnimg.cn/56221e3c15684552b7ff113d63cc23b3.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16" /></p>
+   <img alt="" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/bomblab/1.png" /></p>
 </li>
 <li>
 <p>执行后发现值被存入了寄存器 %rdi
-<img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/867c291a5b6e46c0bb316ed9716d6917.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16" /></p>
+<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/bomblab/2.png" /></p>
 </li>
 <li>
 <p>然后单步进入 phase_1 发现 esi 被存值 'B'，而且调用了函数 strings_not_equal，可想而知，需要输入的字母是<strong>B</strong>
-<img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/54af0c9caca746579d2ba6d46a5ae0ec.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16" /></p>
+<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/bomblab/3.png" /></p>
 </li>
 <li>
 <p>验证，寄了</p>
 <p>当时做到这里我是万分激动啊，觉得简单又有成就感，但是尝试输入'B'结果失败了，让我大吃一惊。回头查看程序，一步步调试 strings_not_equal，发现果然是我想当然了，题目从来没明说过输入只是一个字符，我调试了里面的 string_length，发现正确答案竟然有 52 个字符，但不可否认的是，我思路是对的，查看的方式错了，于是有了接下来的</p>
 </li>
 <li>
-<p><img alt="在这里插入图片描述" src="https://img-blog.csdnimg.cn/95377c1e00534d00bc48ee08378bd363.png?x-oss-process=image/watermark,type_ZHJvaWRzYW5zZmFsbGJhY2s,shadow_50,text_Q1NETiBA6L-Z5bCx5b6I5biF,size_20,color_FFFFFF,t_70,g_se,x_16" /></p>
+<p><img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/bomblab/4.png" /></p>
 </li>
 <li>
 <p>这下OK了</p>
