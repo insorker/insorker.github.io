@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6.S081「Xv6 and Unix utilities」</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link href="/css/prism.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            <h1>6.S081「Xv6 and Unix utilities」</h1>
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | Posted on 2022-02-21</span>
+        </div>
+    </div>
+    <div><h1 id="6s081xv6-and-unix-utilities">6.S081「Xv6 and Unix utilities」</h1>
+<ul>
+<li>insorker</li>
+<li>2022/2/21</li>
+</ul>
+<h2 id="hello">Hello</h2>
+<p>新学期，新气象，祝看到这篇文章的人一生不患腱鞘炎。</p>
+<h2 id="introduction">Introduction</h2>
+<p>This lab will familiarize you with xv6 and its system calls.</p>
+<p>做了一遍所有题目，主要考察的还是你对系统调用的理解，虽然后面的东西还没学，但我目前猜测是先完善shell和gdb，做好调试工作，然后再深入操作系统。</p>
+<p>因为和南大的PA是一起做的，所以取长补短还算有了一些心得【当然是取他人之长补我自己的短】。这里做一些推荐：</p>
+<ul>
+<li>ctags：很好用的vim插件</li>
+<li>CSAPP：学一遍还是很有帮助的</li>
+</ul>
+<h2 id="problems">Problems</h2>
+<blockquote>
+<p>突然想起来的声明：因为只是练习题，所以不做异常判断了</p>
+</blockquote>
+<h3 id="1-sleep-easy">1. sleep (<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">easy</a>)</h3>
+<p>简单题，主要就是让你熟悉一下做题大概的流程</p>
+<pre><code class="language-C">#include &quot;kernel/types.h&quot;
+#include &quot;kernel/stat.h&quot;
+#include &quot;user/user.h&quot;
+
+static char sleep_error[] = &quot;Sleep Error: No Input&quot;;
+
+int
+main(int argc, char *argv[])
+{
+    if (argc == 1) {
+        write(1, sleep_error, strlen(sleep_error));
+        exit(1);
+    }
+
+    sleep(atoi(argv[1]));
+
+    exit(0);
+}
+</code></pre>
+<h3 id="2-pingpong-easy">2. pingpong (<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">easy</a>)</h3>
+<p>像乒乓球一样，想想一个来回的过程。</p>
+<p>题目没说发送什么东西，所以重点在于你发送的顺序：</p>
+<ol>
+<li>parent send byte</li>
+<li>parent wait</li>
+<li>child read and print</li>
+<li>child send byte</li>
+<li>child exit</li>
+<li>parent read and print</li>
+</ol>
+<p>然后代码就很简单了</p>
+<pre><code class="language-C">#include &quot;kernel/types.h&quot;
+#include &quot;kernel/stat.h&quot;
+#include &quot;user/user.h&quot;
+
+static char pipe_error[] = &quot;Pipe Error&quot;;
+
+int
+main(int argc, char *argv[])
+{
+    int p[2], childpid;
+    char psend = 'f', ssend = 's';
+    char precv, srecv;
+
+    if (pipe(p) == -1) {
+        write(1, pipe_error, sizeof(pipe_error));
+        exit(-1);
+    }
+
+    childpid = fork();
+
+    if (childpid == 0) {
+        read(p[0], &amp;srecv, sizeof(srecv));
+        printf(&quot;%d: received ping\n&quot;, getpid());
+
+        write(p[1], &amp;ssend, sizeof(ssend));
+    }
+    else {
+        write(p[1], &amp;psend, sizeof(&amp;psend));
+
+        wait(0);
+        read(p[0], &amp;precv, sizeof(precv));
+        printf(&quot;%d: received pong\n&quot;, getpid());
+        close(p[0]);
+        close(p[1]);
+    }
+
+    exit(0);
+}
+</code></pre>
+<h3 id="3-primes-moderatehard">3. primes (<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">moderate</a>)/(<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">hard</a>)</h3>
+<p>这题确实算难题，但又其实很简单。我卡了一会的原因是我知道要关掉所有输出，但还是忘了关掉父线程的输出。</p>
+<p>解释一下题目：</p>
+<p>题目也说了，去这个页面<a href="https://swtch.com/~rsc/thread/">csp</a>的中间那张图的前后文理解一下题目，原页面的伪代码也写的很清楚，思路还是有的。</p>
+<p>看完了后整体上第一感觉肯定是递归，但是写迭代也不是不能写（我就是），跳出条件就是遍历完34个数字。然后想的就是如何实现，因为具有传递性，所以对于某个中间部分，最少需要两个管道，一个从上一个部分读取，一个向下一个部分输出，因为时间上不能确定谁先谁后，所以必须要两个。</p>
+<blockquote>
+<p>补充一个关于read系统调用的知识：</p>
+<p><a href="https://pdos.csail.mit.edu/6.828/2020/xv6/book-riscv-rev1.pdf">教程</a>第16页中间有一段话</p>
+<p>If no data is available, a read on a pipe waits for either data to be written or for all file descriptors referring to the write end to be closed; in the latter case, read will return 0, just as if the end of a data file had been reached. </p>
+<p>意思就是read结束一个条件是EOF，另一个是所有输入关闭，所以这道题要我们手动close所有输入文件描述符</p>
+</blockquote>
+<p>整理一下我们的思路，假设我们现在fork出来了一个子进程，他需要做什么：</p>
+<ol>
+<li>父进程向他发送数字，从左边的管道读取，第一个数字是质数</li>
+<li>本身需要读取所有数字，不能被质数整除的数字write到右边的管道</li>
+<li>读取完成后，关闭读取，创建一个子进程，从操作1开始重复</li>
+<li>wait and exit</li>
+</ol>
+<p>写成代码就是这样紫</p>
+<pre><code class="language-C">#include &quot;kernel/types.h&quot;
+#include &quot;kernel/stat.h&quot;
+#include &quot;user/user.h&quot;
+
+int
+main(int argc, char *argv[])
+{
+    int pl[2], pr[2];
+
+    pipe(pr);
+    for (int i = 2; i &lt;= 35; i ++ )
+        write(pr[1], &amp;i, sizeof(i));
+
+    while (1) {
+        int num = -1, prime;
+        pl[0] = pr[0], close(pr[1]);
+
+        if (fork() == 0) {
+            pipe(pr);
+
+            read(pl[0], &amp;prime, sizeof(prime));
+            printf(&quot;prime %d\n&quot;, prime);
+
+            /* printf(&quot;num&quot;); */
+            while (read(pl[0], &amp;num, sizeof(num))) {
+                /* printf(&quot; %d&quot;, num); */
+                if (num % prime != 0)
+                    write(pr[1], &amp;num, sizeof(num));
+            }
+            /* printf(&quot;\n&quot;); */
+            close(pl[0]);
+
+            if (num == -1) {
+                close(pr[0]);
+                exit(0);
+            }
+        }
+        else {
+            wait(0);
+            exit(0);
+        }
+    }
+}
+</code></pre>
+<h3 id="4-find-moderate">4. find (<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">moderate</a>)</h3>
+<p>这里需要注意的是find可能和我们平常用的方法不一样，这里的使用时<code>find [path] [file]</code>按照这个思路编程就行了</p>
+<p>然后参考ls.c，照着抄就很简单了（不是</p>
+<p>另外要记得特判一下"."和".."</p>
+<pre><code class="language-C">#include &quot;kernel/types.h&quot;
+#include &quot;kernel/stat.h&quot;
+#include &quot;user/user.h&quot;
+#include &quot;kernel/fs.h&quot;
+
+#define ALERT(x) printf(&quot;wrong =&gt; %d\n&quot;, x)
+
+char*
+fmtname(char *path)
+{
+    char *p;
+
+    for (p = path + strlen(path); p &gt;= path &amp;&amp; *p != '/'; p -- )
+        ;
+    p ++ ;
+
+    return p;
+}
+
+void
+find(char *path, char *file)
+{
+    char buf[512], *p;
+    int fd;
+    struct stat st;
+    struct dirent de;
+
+    if ((fd = open(path, 0)) &lt; 0) {
+        ALERT(3); return;
+    }
+
+    if (fstat(fd, &amp;st) &lt; 0) {
+        ALERT(4); close(fd); return;
+    }
+
+    switch (st.type) {
+        case T_FILE:
+            if (strcmp(fmtname(path), file) == 0)
+                printf(&quot;%s\n&quot;, path);
+            break;
+        case T_DIR:
+            strcpy(buf, path);
+            p = buf + strlen(buf);
+            *p++ = '/';
+
+            while (read(fd, &amp;de, sizeof(de)) == sizeof(de)) {
+                if (de.inum == 0)
+                    continue;
+                memmove(p, de.name, DIRSIZ);
+                if (strcmp(de.name, &quot;.&quot;) == 0)
+                    continue;
+                else if (strcmp(de.name, &quot;..&quot;) == 0)
+                    continue;
+                p[DIRSIZ] = 0;
+
+                find(buf, file);
+            }
+
+            break;
+    }
+
+    close(fd);
+}
+
+int
+main(int argc, char *argv[])
+{
+    if (argc &lt; 3) {
+        ALERT(0);
+        exit(1);
+    }
+
+    for (int i = 2; i &lt; argc; i ++ )
+        find(argv[1], argv[i]);
+
+    exit(0);
+}
+</code></pre>
+<h3 id="5-xargs-moderate">5. xargs (<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">moderate</a>)</h3>
+<p>这题也不难，内存分配好就没问题了，看了另外一个人的解说，这里粘贴过来</p>
+<blockquote>
+<p><a href="https://zhuanlan.zhihu.com/p/341805640">原文链接</a></p>
+<p>说实话，做实验之前我都不知道 <code>xargs</code> 是干嘛用的。所以得先了解一下 <code>xargs</code> 的作用，参考<a href="https://www.ruanyifeng.com/blog/2019/08/xargs-tutorial.html">阮一峰的博客</a></p>
+<p>其中，第二段的一句话非常关键；</p>
+<blockquote>
+<p>xargs命令的作用，是将标准输入转为命令行参数 所以我们实验的整体思路，就是读入标准输入，转成多个命令行参数。</p>
+</blockquote>
+<p>只要把握住这句话，这个实验代码就呼之欲出了。</p>
+</blockquote>
+<p>其实这里我还有个疑问，malloc分配的内存是什么时候被释放的？</p>
+<p>因为调用了exec，所以没办法手动释放，那么不就造成内存泄漏了吗？</p>
+<pre><code class="language-C">#include &quot;kernel/types.h&quot;
+#include &quot;kernel/stat.h&quot;
+#include &quot;user/user.h&quot;
+#include &quot;kernel/param.h&quot;
+
+int
+main(int argc, char *argv[])
+{
+    char *args[MAXARG], *p;
+    int args_idx = 0;
+
+    for (int i = 1; i &lt; argc; i ++ ) {
+        args[args_idx] = (char *)malloc(sizeof(argv[i]));
+        memmove(args[args_idx], argv[i], sizeof(argv[i]));
+        args_idx ++ ;
+    }
+
+    args[args_idx] = (char *)malloc(512 * sizeof(char));
+    p = args[args_idx ++ ];
+    while (read(0, p, sizeof(char))) {
+        if (*p == ' ' || *p == '\n') {
+            *p = 0;
+            if (*p == '\n')
+                break;
+            args[args_idx] = (char *)malloc(512 * sizeof(char));
+            p = args[args_idx ++ ];
+        }
+        else p ++ ;
+    }
+
+    /* for (int i = 0; i &lt; args_idx; i ++ ) */
+    /*     printf(&quot;%s\n&quot;, args[i]); */
+
+    exec(args[0], args);
+
+    exit(0);
+}
+</code></pre>
+<h2 id="the-end">The End</h2>
+<p><img alt="" src="https://gitee.com/insorker/image-host/raw/master/blog/6.S081/lab1/result.png" /></p>
+<p>开始？还是结束？</p>
+<p>下一站： <a href="https://pdos.csail.mit.edu/6.828/2020/labs/pgtbl.html">Lab pgtbl: Page tables</a></p></div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/prism.js"></script>
+
+    
+    </div>
+</body>
+</html>
