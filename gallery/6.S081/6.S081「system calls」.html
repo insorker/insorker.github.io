@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6.S081「system calls」</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link href="/css/prism.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            <h1>6.S081「system calls」</h1>
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | Posted on 2022-02-21</span>
+        </div>
+    </div>
+    <div><h1 id="6s081system-calls">6.S081「system calls」</h1>
+<ul>
+<li>insorker</li>
+<li>2022/2/24</li>
+</ul>
+<h2 id="hello">Hello</h2>
+<p>好，很有精神</p>
+<h2 id="introduction">Introduction</h2>
+<p>上面标注的难度还是中等，捏麻麻我怎么就不会做呢</p>
+<p>（以下观点仅代表直到目前的学习和查资料中我所产生的认知）</p>
+<p>首先要理解的是整个程序运行的过程，但很可惜的是原文标注的Chapter 2、Sections 4.3和4.4并不足以解答我的疑问（或者准确的说我看不懂他说的东西）。查了很多其他的资料才大概理解了一些</p>
+<h3 id="chapter-2">Chapter 2</h3>
+<p>前几小节主要是讲概念，从2.6开始进入程序运行的主题</p>
+<h4 id="entrys">entry.S解读</h4>
+<p>xv6运行从_entry (kernel/entry.S:6)开始</p>
+<pre><code>la sp, stack0
+</code></pre>
+<p>la即load address，把stack0的地址加载到sp中</p>
+<pre><code class="language-C">__attribute__ ((aligned (16))) char stack0[4096 * NCPU];
+</code></pre>
+<p>内存对齐，将stack0的每个char按照64位的方式对齐（每个char的地址都</p>
+<p>是8的整数倍）</p>
+<blockquote>
+<p><a href="https://nshipster.cn/__attribute__/">__attribute__定义</a></p>
+<p><a href="https://blog.csdn.net/fengbingchun/article/details/81321419">__attribute__((aligned(n)))</a></p>
+<p>[C++内存对齐](</p>
+</blockquote>
+<pre><code>li a0, 1024*4
+</code></pre>
+<p>li即Load immediate，把1024*4加载到a0中</p>
+<pre><code>csrr a1, mhartid
+</code></pre>
+<p><code>csrr</code>，读取一个 CSR 的值到通用寄存器。如：<code>csrr t0, mstatus</code>，读取 <code>mstatus</code> 的值到 <code>t0</code> 中</p>
+<p>mhartid貌似是hart的数目。hart(hardware thread)指硬件线程数，貌似就是CPU线程数，比如双核四线程，那么就是4</p>
+<pre><code>addi a1, a1, 1
+mul a0, a0, a1
+add sp, sp, a0
+</code></pre>
+<p>a1 = a1 + 1</p>
+<p>a0 = a0 * a1</p>
+<p>sp = sp * a0</p>
+<h4 id="startc">start.c解读</h4>
+<p>关于mstatus，这一贴一段链接，感觉不是目前能看的懂得</p>
+<blockquote>
+<p><a href="https://dingfen.github.io/risc-v/2020/08/05/riscv-privileged.html">https://dingfen.github.io/risc-v/2020/08/05/riscv-privileged.html</a></p>
+</blockquote>
+<p>剩下内容先跳过。。。知道是机器模式下初始化，程序计数器放在了main，然后进入监管者模式就行了</p>
+<h4 id="mainc">main.c解读</h4>
+<blockquote>
+<p>// start() jumps here in supervisor mode on all CPUs.</p>
+</blockquote>
+<p>大概就是开启了一些东西，然后调用userinit执行一些initcode，由于这时候还没有文件系统，所以只能把二进制文件写在数组里，相对应的原文就是initcode.S (user/initcode.S:1)。它用exec去执行Init (user/init.c:15)进入main函数，开一个console的文件，dup(0)两次打开stdout和stderr，然后开sh整个系统就算是打开了</p>
+<h3 id="sections-43-and-44">Sections 4.3 and 4.4</h3>
+<p>主要讲的是如何将user call转到system call</p>
+<p>这儿其实很有意思，如果在做lab1的时候细心一点的同学，其实会发现比如read、write等系统调用是无法直接跳转到源代码的，我当初没在意这一点，以为是我vim+ctags用的不好，而且由于fork是有实现的，像pingpong里面用ctags跳转会直接跳转到fork的实现，所以我以为系统调用是直接调用写好的函数。</p>
+<p>所以看到这里才发现错了（加上很多瞎摸索的时间和别人的攻略），和我原来的理解大相径庭。还是要说一句，以下的理解很可能有问题，但已经是我目前最接受的</p>
+<h4 id="initcodes">initcode.S解读</h4>
+<p>这里体现出的是如何进行exec的系统调用。首先赋值a0（执行程序），a1（程序的参数），a7（exec的系统调用）。然后调用ecall进入内核执行uservec和usertrap（暂时不用管他们），然后进入syscall开始真的执行exec。</p>
+<blockquote>
+<p>这里有个非常神奇的语法，是GNU提供的，visual studio不支持</p>
+<p><a href="https://stackoverflow.com/questions/18329206/strange-array-initialize-expression">https://stackoverflow.com/questions/18329206/strange-array-initialize-expression</a></p>
+<h3 id="520-designated-initializers"><a href="http://gcc.gnu.org/onlinedocs/gcc-4.1.2/gcc/Designated-Inits.html">5.20 Designated Initializers</a>:</h3>
+<p>In ISO C99 you can give the elements in any order, specifying the array indices or structure field names they apply to, and GNU C allows this as an extension in C89 mode as well. This extension is not implemented in GNU C++. To specify an array index, write <code>[index] =</code> before the element value. For example,</p>
+<p><code>c
+ int a[6] = { [4] = 29, [2] = 15 };</code></p>
+<p>is equivalent to</p>
+<p><code>c
+ int a[6] = { 0, 0, 15, 0, 29, 0 };</code></p>
+</blockquote>
+<p>syscall()相当于获取当前进程的a7（系统调用号），用<code>syscalls[num]()</code>去执行并将返回值存入a0，这样就通过间接的方式（syscalls这个指针数组）进行系统调用。我们可以验证一下，比如进入sys_fork()的实现，可以发现函数内部调用了fork()，也就是说其实fork()其实是被sys_fork()调用了，真正的系统调用在这里。</p>
+<h4 id="_1">其他</h4>
+<p>关于系统调用的参数就不提了，看4.4就行了，或者去看其他sys_xxx()的写法也就明白了</p>
+<h2 id="problems">Problems</h2>
+<h3 id="1-system-call-tracing-moderate">1. System call tracing (<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">moderate</a>)</h3>
+<p>按照之前说的一步一步改，先修改proc.h中的struct proc，添加</p>
+<pre><code class="language-c">struct proc {
+    ...
+    int mask;
+};
+</code></pre>
+<p>sysproc.c添加sys_trace()的定义</p>
+<pre><code class="language-c">uint64
+sys_trace(void)
+{
+    int mask;
+    if (argint(0, &amp;mask) &lt; 0)
+        return -1;
+    myproc()-&gt;mask = mask &amp; (unsigned)(-1);
+    return 0;
+}
+</code></pre>
+<p>改变syscall()，这里要注意我们可以获得系统调用的序号，但没办法直接获得名称，所以要自定义一个数组</p>
+<pre><code class="language-C">static char *syscalls_name[] = {
+[SYS_fork]   &quot;sys_fork&quot;,
+[SYS_exit]   &quot;sys_exit&quot;,
+[SYS_wait]   &quot;sys_wait&quot;,
+[SYS_pipe]   &quot;sys_pipe&quot;,
+[SYS_read]   &quot;sys_read&quot;,
+[SYS_kill]   &quot;sys_kill&quot;,
+[SYS_exec]   &quot;sys_exec&quot;,
+[SYS_fstat]  &quot;sys_fstat&quot;,
+[SYS_chdir]  &quot;sys_chdir&quot;,
+[SYS_dup]    &quot;sys_dup&quot;,
+[SYS_getpid] &quot;sys_getpid&quot;,
+[SYS_sbrk]   &quot;sys_sbrk&quot;,
+[SYS_sleep]  &quot;sys_sleep&quot;,
+[SYS_uptime] &quot;sys_uptime&quot;,
+[SYS_open]   &quot;sys_open&quot;,
+[SYS_write]  &quot;sys_write&quot;,
+[SYS_mknod]  &quot;sys_mknod&quot;,
+[SYS_unlink] &quot;sys_unlink&quot;,
+[SYS_link]   &quot;sys_link&quot;,
+[SYS_mkdir]  &quot;sys_mkdir&quot;,
+[SYS_close]  &quot;sys_close&quot;,
+[SYS_trace]  &quot;sys_trace&quot;,
+};
+
+void
+syscall(void)
+{
+  int num;
+  struct proc *p = myproc();
+
+  num = p-&gt;trapframe-&gt;a7;
+  if(num &gt; 0 &amp;&amp; num &lt; NELEM(syscalls) &amp;&amp; syscalls[num]) {
+    p-&gt;trapframe-&gt;a0 = syscalls[num]();
+    if (p-&gt;mask &amp; (1 &lt;&lt; num)) {
+      printf(&quot;%d: syscall %s -&gt; %d\n&quot;, p-&gt;pid, syscalls_name[num], p-&gt;trapframe-&gt;a0);
+    }
+  } else {
+    printf(&quot;%d %s: unknown sys call %d\n&quot;,
+            p-&gt;pid, p-&gt;name, num);
+    p-&gt;trapframe-&gt;a0 = -1;
+  }
+}
+</code></pre>
+<p>然后把fork()改一下，要从父进程继承mask，这个看看就会了</p>
+<pre><code class="language-c">// Create a new process, copying the parent.
+// Sets up child kernel stack to return as if from fork() system call.
+int
+fork(void)
+{
+  ...
+
+  np-&gt;state = RUNNABLE;
+
+  // add parent's mask
+  np-&gt;mask = p-&gt;mask;
+
+  release(&amp;np-&gt;lock);
+
+  return pid;
+}
+</code></pre>
+<p>一定要记得把一些声明填上，不然你没办法通过编译</p>
+<h3 id="2sysinfo-moderate">2.Sysinfo (<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">moderate</a>)</h3>
+<p>第一步永远是添加声明</p>
+<h4 id="_2">计算剩余内存</h4>
+<p>可以看到这样一个有点像指针的东西</p>
+<pre><code class="language-C">struct {
+  struct spinlock lock;
+  struct run *freelist;
+} kmem;
+</code></pre>
+<p>观察他在kalloc中的使用，可以明白他是如何分配内存的，每次分配PGSIZE大小的内存，于是照着抄很容易得到下面的代码，关于lock我还不清楚是什么用</p>
+<pre><code class="language-C">// 获得amount of free memory
+uint64
+countFreeMemory(void)
+{
+  uint64 cnt = 0;
+  struct run *r = kmem.freelist;
+
+  acquire(&amp;kmem.lock);
+  while (r) {
+    cnt += PGSIZE;
+    r = r-&gt;next;
+  }
+  release(&amp;kmem.lock);
+
+  return cnt;
+}
+</code></pre>
+<h4 id="_3">计算正在运行的进程</h4>
+<p>观察struct proc可以看到其中有state变量表示其状态，那么正在运行的程序就是非UNUSED。然后发现所有进程都存在了一个数组中</p>
+<pre><code class="language-c">// kernel/proc.c
+struct proc proc[NPROC];
+</code></pre>
+<p>如何遍历，看已经给出的函数就能明白了，代码也就很容易得到了</p>
+<pre><code class="language-c">// 获得number of processes
+uint64
+proccount(void)
+{
+  uint64 cnt = 0;
+  struct proc *p;
+
+  for(p = proc; p &lt; &amp;proc[NPROC]; p++){
+    acquire(&amp;p-&gt;lock);
+    if(p-&gt;state != UNUSED){
+        cnt ++ ;
+    }
+    release(&amp;p-&gt;lock);
+  }
+
+  return cnt;
+}
+</code></pre>
+<h4 id="sysinfo">sysinfo()</h4>
+<p>提示也给的很清楚了，去看sys_fstat()和filestate()函数，然后看注释学写法，这个也不难</p>
+<pre><code class="language-c">uint64
+sys_sysinfo(void)
+{
+    uint64 addr;
+    struct sysinfo si;
+    struct proc *p = myproc();
+
+    if (argaddr(0, &amp;addr) &lt; 0)
+        return -1;
+
+    si.freemem = countFreeMemory();
+    si.nproc = proccount();
+
+    if(copyout(p-&gt;pagetable, addr, (char *)&amp;si, sizeof(si)) &lt; 0)
+      return -1;
+
+    return addr;
+}
+</code></pre>
+<h4 id="_4">坑</h4>
+<p>如果你全部完成后编译出了这样的问题</p>
+<pre><code>make: *** No rule to make target 'user/_trace', needed by 'fs.img'. Stop.
+</code></pre>
+<p>把Makefile中的_sysinfo改成_sysinfotest就行了</p>
+<h2 id="the-end">The End</h2>
+<p>总的来说，这次主要考察的是你能不能看的懂，能不能把题意理解了，代码倒不是很难</p>
+<p>参考资料：</p>
+<p><a href="https://zhuanlan.zhihu.com/p/274369780">https://zhuanlan.zhihu.com/p/274369780</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/346497140">https://zhuanlan.zhihu.com/p/346497140</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/332243456">https://zhuanlan.zhihu.com/p/332243456</a></p>
+<p>下一站： <a href="https://pdos.csail.mit.edu/6.828/2020/labs/pgtbl.html">Lab pgtbl: Page tables</a></p></div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/prism.js"></script>
+
+    
+    </div>
+</body>
+</html>
