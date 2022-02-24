@@ -47,11 +47,11 @@
 </blockquote>
 <h3 id="1-sleep-easy">1. sleep (<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">easy</a>)</h3>
 <p>简单题，主要就是让你熟悉一下做题大概的流程</p>
-<pre><code class="language-C">#include &quot;kernel/types.h&quot;
-#include &quot;kernel/stat.h&quot;
-#include &quot;user/user.h&quot;
+<pre class="highlight"><code class="language-C">#include "kernel/types.h"
+#include "kernel/stat.h"
+#include "user/user.h"
 
-static char sleep_error[] = &quot;Sleep Error: No Input&quot;;
+static char sleep_error[] = "Sleep Error: No Input";
 
 int
 main(int argc, char *argv[])
@@ -64,8 +64,7 @@ main(int argc, char *argv[])
     sleep(atoi(argv[1]));
 
     exit(0);
-}
-</code></pre>
+}</code></pre>
 <h3 id="2-pingpong-easy">2. pingpong (<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">easy</a>)</h3>
 <p>像乒乓球一样，想想一个来回的过程。</p>
 <p>题目没说发送什么东西，所以重点在于你发送的顺序：</p>
@@ -78,11 +77,11 @@ main(int argc, char *argv[])
 <li>parent read and print</li>
 </ol>
 <p>然后代码就很简单了</p>
-<pre><code class="language-C">#include &quot;kernel/types.h&quot;
-#include &quot;kernel/stat.h&quot;
-#include &quot;user/user.h&quot;
+<pre class="highlight"><code class="language-C">#include "kernel/types.h"
+#include "kernel/stat.h"
+#include "user/user.h"
 
-static char pipe_error[] = &quot;Pipe Error&quot;;
+static char pipe_error[] = "Pipe Error";
 
 int
 main(int argc, char *argv[])
@@ -100,7 +99,7 @@ main(int argc, char *argv[])
 
     if (childpid == 0) {
         read(p[0], &amp;srecv, sizeof(srecv));
-        printf(&quot;%d: received ping\n&quot;, getpid());
+        printf("%d: received ping\n", getpid());
 
         write(p[1], &amp;ssend, sizeof(ssend));
     }
@@ -109,14 +108,13 @@ main(int argc, char *argv[])
 
         wait(0);
         read(p[0], &amp;precv, sizeof(precv));
-        printf(&quot;%d: received pong\n&quot;, getpid());
+        printf("%d: received pong\n", getpid());
         close(p[0]);
         close(p[1]);
     }
 
     exit(0);
-}
-</code></pre>
+}</code></pre>
 <h3 id="3-primes-moderatehard">3. primes (<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">moderate</a>)/(<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">hard</a>)</h3>
 <p>这题确实算难题，但又其实很简单。我卡了一会的原因是我知道要关掉所有输出，但还是忘了关掉父线程的输出。</p>
 <p>解释一下题目：</p>
@@ -136,9 +134,9 @@ main(int argc, char *argv[])
 <li>wait and exit</li>
 </ol>
 <p>写成代码就是这样紫</p>
-<pre><code class="language-C">#include &quot;kernel/types.h&quot;
-#include &quot;kernel/stat.h&quot;
-#include &quot;user/user.h&quot;
+<pre class="highlight"><code class="language-C">#include "kernel/types.h"
+#include "kernel/stat.h"
+#include "user/user.h"
 
 int
 main(int argc, char *argv[])
@@ -157,15 +155,15 @@ main(int argc, char *argv[])
             pipe(pr);
 
             read(pl[0], &amp;prime, sizeof(prime));
-            printf(&quot;prime %d\n&quot;, prime);
+            printf("prime %d\n", prime);
 
-            /* printf(&quot;num&quot;); */
+            /* printf("num"); */
             while (read(pl[0], &amp;num, sizeof(num))) {
-                /* printf(&quot; %d&quot;, num); */
+                /* printf(" %d", num); */
                 if (num % prime != 0)
                     write(pr[1], &amp;num, sizeof(num));
             }
-            /* printf(&quot;\n&quot;); */
+            /* printf("\n"); */
             close(pl[0]);
 
             if (num == -1) {
@@ -178,18 +176,17 @@ main(int argc, char *argv[])
             exit(0);
         }
     }
-}
-</code></pre>
+}</code></pre>
 <h3 id="4-find-moderate">4. find (<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">moderate</a>)</h3>
 <p>这里需要注意的是find可能和我们平常用的方法不一样，这里的使用时<code>find [path] [file]</code>按照这个思路编程就行了</p>
 <p>然后参考ls.c，照着抄就很简单了（不是</p>
 <p>另外要记得特判一下"."和".."</p>
-<pre><code class="language-C">#include &quot;kernel/types.h&quot;
-#include &quot;kernel/stat.h&quot;
-#include &quot;user/user.h&quot;
-#include &quot;kernel/fs.h&quot;
+<pre class="highlight"><code class="language-C">#include "kernel/types.h"
+#include "kernel/stat.h"
+#include "user/user.h"
+#include "kernel/fs.h"
 
-#define ALERT(x) printf(&quot;wrong =&gt; %d\n&quot;, x)
+#define ALERT(x) printf("wrong =&gt; %d\n", x)
 
 char*
 fmtname(char *path)
@@ -222,7 +219,7 @@ find(char *path, char *file)
     switch (st.type) {
         case T_FILE:
             if (strcmp(fmtname(path), file) == 0)
-                printf(&quot;%s\n&quot;, path);
+                printf("%s\n", path);
             break;
         case T_DIR:
             strcpy(buf, path);
@@ -233,9 +230,9 @@ find(char *path, char *file)
                 if (de.inum == 0)
                     continue;
                 memmove(p, de.name, DIRSIZ);
-                if (strcmp(de.name, &quot;.&quot;) == 0)
+                if (strcmp(de.name, ".") == 0)
                     continue;
-                else if (strcmp(de.name, &quot;..&quot;) == 0)
+                else if (strcmp(de.name, "..") == 0)
                     continue;
                 p[DIRSIZ] = 0;
 
@@ -260,8 +257,7 @@ main(int argc, char *argv[])
         find(argv[1], argv[i]);
 
     exit(0);
-}
-</code></pre>
+}</code></pre>
 <h3 id="5-xargs-moderate">5. xargs (<a href="https://pdos.csail.mit.edu/6.828/2020/labs/guidance.html">moderate</a>)</h3>
 <p>这题也不难，内存分配好就没问题了，看了另外一个人的解说，这里粘贴过来</p>
 <blockquote>
@@ -275,10 +271,10 @@ main(int argc, char *argv[])
 </blockquote>
 <p>其实这里我还有个疑问，malloc分配的内存是什么时候被释放的？</p>
 <p>因为调用了exec，所以没办法手动释放，那么不就造成内存泄漏了吗？</p>
-<pre><code class="language-C">#include &quot;kernel/types.h&quot;
-#include &quot;kernel/stat.h&quot;
-#include &quot;user/user.h&quot;
-#include &quot;kernel/param.h&quot;
+<pre class="highlight"><code class="language-C">#include "kernel/types.h"
+#include "kernel/stat.h"
+#include "user/user.h"
+#include "kernel/param.h"
 
 int
 main(int argc, char *argv[])
@@ -306,13 +302,12 @@ main(int argc, char *argv[])
     }
 
     /* for (int i = 0; i &lt; args_idx; i ++ ) */
-    /*     printf(&quot;%s\n&quot;, args[i]); */
+    /*     printf("%s\n", args[i]); */
 
     exec(args[0], args);
 
     exit(0);
-}
-</code></pre>
+}</code></pre>
 <h2 id="the-end">The End</h2>
 <p><img alt="" src="https://gitee.com/insorker/image-host/raw/master/blog/6.S081/lab1/result.png" /></p>
 <p>开始？还是结束？</p>

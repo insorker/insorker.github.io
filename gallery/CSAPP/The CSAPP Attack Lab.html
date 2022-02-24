@@ -70,9 +70,9 @@
 <li>Level 2</li>
 </ol>
 <p>意思就是你没办法去执行你的栈注入的代码了，你只能通过不断的跳转函数，执行函数里面的语句（听起来确实挺不靠谱的），去找到你想要的代码。简而言之，就是就地取材，那么根据你要找的汇编代码，比如</p>
-<p><code>The byte sequence 48 89 c7 encodes the instruction movq %rax, %rdi.</code></p>
+<pre class="highlight"><code>The byte sequence 48 89 c7 encodes the instruction movq %rax, %rdi.</code></pre>
 <p>在vim里面</p>
-<p><code>/48 89 c7</code></p>
+<pre class="highlight"><code>/48 89 c7</code></pre>
 <p>可以找到三个处引用（其实四处），然后三个里面只有一个在48 89 c7的后面借了一个90（即nop），所以。。。</p>
 <ol>
 <li>Level 3</li>

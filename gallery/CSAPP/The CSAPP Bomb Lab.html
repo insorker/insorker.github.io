@@ -50,23 +50,22 @@
 <li>如果是第一次学会 gdb 的使用，可能还有点使不上劲，不建议直接用书上的<code>disas</code>，推荐使用<code>layout</code>，可以上网百度，或者 help 一下，或者使用以下简单的指令</li>
 </ol>
 <blockquote>
-<p>layout 用于分割窗口，可以一边查看代码，一边测试。主要有以下几种用法：
-   layout src：显示源代码窗口
-   layout asm：显示汇编窗口
-   layout regs：显示源代码/汇编和寄存器窗口
-   layout split：显示源代码和汇编窗口
-   layout next：显示下一个layout
-   layout prev：显示上一个layout
-   Ctrl + L：刷新窗口
-   Ctrl + x，再按1：单窗口模式，显示一个窗口
+<p>layout 用于分割窗口，可以一边查看代码，一边测试。主要有以下几种用法：<br />
+   layout src：显示源代码窗口<br />
+   layout asm：显示汇编窗口<br />
+   layout regs：显示源代码/汇编和寄存器窗口<br />
+   layout split：显示源代码和汇编窗口<br />
+   layout next：显示下一个layout<br />
+   layout prev：显示上一个layout<br />
+   Ctrl + L：刷新窗口<br />
+   Ctrl + x，再按1：单窗口模式，显示一个窗口<br />
    Ctrl + x，再按2：双窗口模式，显示两个窗口</p>
 <p>​  Ctrl + x，再按a：回到传统模式，即退出layout，回到执行layout之前的调试窗口。</p>
 </blockquote>
 <ol>
 <li>学习一些输出的小诀窍，比如搜索 gdb x，还有如下</li>
 </ol>
-<p><code>c
-   print *(char *)$rax</code></p>
+<pre class="highlight"><code class="language-c">print *(char *)$rax</code></pre>
 <p>然后就没什么好说的了，动手试试吧</p>
 <h2 id="problem">Problem</h2>
 <h3 id="1-phase_1">1. phase_1</h3>
@@ -77,15 +76,15 @@
 <p>很简单的题目，专门坑不熟悉 gdb 使用的新手</p>
 <ol>
 <li>
-<p>在<code>input = read_line();</code>前敲下断点
-   <img alt="" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/bomblab/1.png" /></p>
+<p>在<code>input = read_line();</code>前敲下断点<br />
+<img alt="" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/bomblab/1.png" /></p>
 </li>
 <li>
-<p>执行后发现值被存入了寄存器 %rdi
+<p>执行后发现值被存入了寄存器 %rdi<br />
 <img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/bomblab/2.png" /></p>
 </li>
 <li>
-<p>然后单步进入 phase_1 发现 esi 被存值 'B'，而且调用了函数 strings_not_equal，可想而知，需要输入的字母是<strong>B</strong>
+<p>然后单步进入 phase_1 发现 esi 被存值 'B'，而且调用了函数 strings_not_equal，可想而知，需要输入的字母是<strong>B</strong><br />
 <img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/bomblab/3.png" /></p>
 </li>
 <li>
@@ -111,19 +110,16 @@
 <h4 id="_3">开解</h4>
 <p>不写太详细了，因为截图太麻烦了</p>
 <p>这题需要一定想象力，题目还是很简单的。首先要猜测输入是什么，从一些蛛丝马迹还是可以看出来到底输入是什么，比如</p>
-<pre><code class="language-c">0x400f05 &lt;phase_2+9&gt;    callq  0x40145c &lt;read_six_numbers&gt;
-</code></pre>
+<pre class="highlight"><code class="language-c">0x400f05 &lt;phase_2+9&gt;    callq  0x40145c &lt;read_six_numbers&gt;</code></pre>
 <p>只有英语专八才能看出来是输入6个数字，事实也确实是输入6个数字，内部细节我看了，和主线没关系（唯一的关系告诉了你，所有参数寄存器的地址都被移送到了栈中，也就是你的输入被送到了栈中存储）</p>
-<pre><code class="language-C">(gdb) x/6dw $rsp
+<pre class="highlight"><code class="language-C">(gdb) x/6dw $rsp
 0x7ffffffeda60: 1       2       4       8
-0x7ffffffeda70: 16      32
-</code></pre>
+0x7ffffffeda70: 16      32</code></pre>
 <p>而且它的下一句话完全是给我们提示了</p>
-<pre><code class="language-C">0x400f0a &lt;phase_2+14&gt;   cmpl   $0x1,(%rsp)
-</code></pre>
+<pre class="highlight"><code class="language-C">0x400f0a &lt;phase_2+14&gt;   cmpl   $0x1,(%rsp)</code></pre>
 <p>这句话说明输入的第一个数要求是1，我只能说很良心了</p>
 <p>然后的关键在这里</p>
-<pre><code class="language-C">0x400f17 &lt;phase_2+27&gt;   mov    -0x4(%rbx),%eax
+<pre class="highlight"><code class="language-C">0x400f17 &lt;phase_2+27&gt;   mov    -0x4(%rbx),%eax
 0x400f1a &lt;phase_2+30&gt;   add    %eax,%eax
 0x400f1c &lt;phase_2+32&gt;   cmp    %eax,(%rbx)
 0x400f1e &lt;phase_2+34&gt;   je     0x400f25 &lt;phase_2+41&gt;
@@ -134,8 +130,7 @@
 0x400f2e &lt;phase_2+50&gt;   jmp    0x400f3c &lt;phase_2+64&gt;
 0x400f30 &lt;phase_2+52&gt;   lea    0x4(%rsp),%rbx
 0x400f35 &lt;phase_2+57&gt;   lea    0x18(%rsp),%rbp
-0x400f3a &lt;phase_2+62&gt;   jmp    0x400f17 &lt;phase_2+27&gt;
-</code></pre>
+0x400f3a &lt;phase_2+62&gt;   jmp    0x400f17 &lt;phase_2+27&gt;</code></pre>
 <p>我都已经把关键部分提取出来了，答案也告诉你，推导一定很容易吧</p>
 <h4 id="_4">答案</h4>
 <p>1 2 4 8 16 32</p>
@@ -148,14 +143,12 @@
 </blockquote>
 <h4 id="_5">开解</h4>
 <p>第3题有点点莫名其妙，看起来好像是一条分叉路，输入两个参数，第一个参数是选择你走哪条路，第二个参数是解，这里仅给出第一个参数为1的解</p>
-<pre><code class="language-C">0x400f75 &lt;phase_3+50&gt;   jmpq   *0x402470(,%rax,8)
-</code></pre>
+<pre class="highlight"><code class="language-C">0x400f75 &lt;phase_3+50&gt;   jmpq   *0x402470(,%rax,8)</code></pre>
 <p>如果输入1，1会被存入%rax，则会跳转到这个位置</p>
-<pre><code class="language-C">0x400fb9 &lt;phase_3+118&gt;  mov    $0x137,%eax
+<pre class="highlight"><code class="language-C">0x400fb9 &lt;phase_3+118&gt;  mov    $0x137,%eax
 0x400fbe &lt;phase_3+123&gt;  cmp    0xc(%rsp),%eax
 0x400fc2 &lt;phase_3+127&gt;  je     0x400fc9 &lt;phase_3+134&gt;
-0x400fc4 &lt;phase_3+129&gt;  callq  0x40143a &lt;explode_bomb&gt;
-</code></pre>
+0x400fc4 &lt;phase_3+129&gt;  callq  0x40143a &lt;explode_bomb&gt;</code></pre>
 <p>然后很简单，这里明说了第二个参数是0x137，即十进制311，bomb解决了</p>
 <h4 id="_6">答案</h4>
 <p>1 311</p>
@@ -169,11 +162,10 @@
 <h4 id="_7">开解</h4>
 <p>这题过的有点懵懵的，大部分我都看懂了，就一个地方没看懂，就是一个右移操作除了2，但我没找到为什么要除以2，明明 cl 是0啊</p>
 <p>这里简单说明一下我的想法吧，这一行代码是关键</p>
-<pre><code class="language-C">0x40103a &lt;phase_4+46&gt;   mov    $0xe,%edx
-0x40103f &lt;phase_4+51&gt;   mov    $0x0,%esi
-</code></pre>
+<pre class="highlight"><code class="language-C">0x40103a &lt;phase_4+46&gt;   mov    $0xe,%edx
+0x40103f &lt;phase_4+51&gt;   mov    $0x0,%esi</code></pre>
 <p>这句话告诉了我们传入 func4() 的第二个参数是14，第三个参数是0，那你可能要问第一个参数呢？第一个参数是我们键盘输入的第一个参数，然后我把里面的 func4() 翻译为了C语言代码</p>
-<pre><code class="language-C">int func4(int edi, int edx, int esi) {
+<pre class="highlight"><code class="language-C">int func4(int edi, int edx, int esi) {
     unsigned int eax = edx - esi;
     unsigned int ecx = eax &gt;&gt; 31;
     eax = (eax + ecx) &gt;&gt; ecx;
@@ -189,8 +181,7 @@
         eax = eax + eax + 1;
     }
     return eax;
-}
-</code></pre>
+}</code></pre>
 <p>这个代码翻译的不一定对（而且第四行的右移操作在实践中证明我是错的，可能我还得看看别人的攻略学习学习），但大体上是对的，还是可以参考一下的。</p>
 <p>结合上下文，这个函数的目的就是返回0，如何返回0呢？要求 ecx == edi，已知 edx 初始化为14，esi 初始化为0，经过计算到达 if 判断时，ecx 的值是7，那么 edi 作为我们的输入最简单的情况就是为7。</p>
 <p>最后，跳出 func4() 后还能发现第二个输入被限定为0，那么答案就呼之欲出了。</p>
@@ -206,11 +197,10 @@
 <h4 id="_9">开解</h4>
 <p>这题非常有意思，里面涉及到了一个叫金丝雀值的东西，可是和解题倒是没半毛钱关系（</p>
 <p>粗略浏览一下代码，发现我们的输入被存在了 rbx 里面，string_length也明说了要输入长度为6的字符串</p>
-<pre><code class="language-C">(gdb) x/s $rbx
-0x6038c0 &lt;input_strings+320&gt;:   &quot;IONEFG&quot;
-</code></pre>
+<pre class="highlight"><code class="language-C">(gdb) x/s $rbx
+0x6038c0 &lt;input_strings+320&gt;:   "IONEFG"</code></pre>
 <p>然后核心的部分就来了</p>
-<pre><code class="language-C">0x40108b &lt;phase_5+41&gt;   movzbl (%rbx,%rax,1),%ecx
+<pre class="highlight"><code class="language-C">0x40108b &lt;phase_5+41&gt;   movzbl (%rbx,%rax,1),%ecx
 0x40108f &lt;phase_5+45&gt;   mov    %cl,(%rsp)
 0x401092 &lt;phase_5+48&gt;   mov    (%rsp),%rdx
 0x401096 &lt;phase_5+52&gt;   and    $0xf,%edx
@@ -218,23 +208,19 @@
 0x4010a0 &lt;phase_5+62&gt;   mov    %dl,0x10(%rsp,%rax,1)
 0x4010a4 &lt;phase_5+66&gt;   add    $0x1,%rax
 0x4010a8 &lt;phase_5+70&gt;   cmp    $0x6,%rax
-0x4010ac &lt;phase_5+74&gt;   jne    0x40108b &lt;phase_5+41&gt;
-</code></pre>
+0x4010ac &lt;phase_5+74&gt;   jne    0x40108b &lt;phase_5+41&gt;</code></pre>
 <p>什么意思呢？就是 rax 一开始被初始化为0，每次循环加1，直到加到6跳出循环。那么这个循环是干什么事情的呢？可以看到 rbx + rax 的值被赋给了ecx，然后一直到第四行，把这个值截断成4位二进制数，再从内存0x4024b0读取一个字符赋给 edx，然后存储到 rsp + 10 + rax 的位置，那我们来看看0x4024b0里面存储了什么</p>
-<pre><code class="language-C">(gdb) x/s 0x4024b0
-0x4024b0 &lt;array.3449&gt;:  &quot;maduiersnfotvbylSo you think you can stop the bomb with ctrl-c, do you?&quot;
-</code></pre>
+<pre class="highlight"><code class="language-C">(gdb) x/s 0x4024b0
+0x4024b0 &lt;array.3449&gt;:  "maduiersnfotvbylSo you think you can stop the bomb with ctrl-c, do you?"</code></pre>
 <p>一段奇怪的乱码，我们要从这些乱码中选择我们需要的字符，那需要的字符是什么捏？</p>
 <p>且看</p>
-<pre><code class="language-C">0x4010ae &lt;phase_5+76&gt;   movb   $0x0,0x16(%rsp)
+<pre class="highlight"><code class="language-C">0x4010ae &lt;phase_5+76&gt;   movb   $0x0,0x16(%rsp)
 0x4010b3 &lt;phase_5+81&gt;   mov    $0x40245e,%esi
 0x4010b8 &lt;phase_5+86&gt;   lea    0x10(%rsp),%rdi
-0x4010bd &lt;phase_5+91&gt;   callq  0x401338 &lt;strings_not_equal&gt;
-</code></pre>
+0x4010bd &lt;phase_5+91&gt;   callq  0x401338 &lt;strings_not_equal&gt;</code></pre>
 <p>去到0x40245e中，一切拨云见日</p>
-<pre><code class="language-C">(gdb) x/s 0x40245e
-0x40245e:       &quot;flyers&quot;
-</code></pre>
+<pre class="highlight"><code class="language-C">(gdb) x/s 0x40245e
+0x40245e:       "flyers"</code></pre>
 <p>答案就出来了</p>
 <blockquote>
 <p>ASCII: 9 1514 6 7 8</p>
@@ -267,14 +253,13 @@
 </ol>
 <blockquote>
 <p>可以看出 0x6032d0 这个地址里面存了些东西，我一开始用十进制去看，完全摸不着头脑。偶然一次用16进制取看了看</p>
-<p><code>C
-(gdb) x/12ag 0x6032d0
+<pre class="highlight"><code class="language-C">(gdb) x/12ag 0x6032d0
 0x6032d0 &lt;node1&gt;:       0x10000014c     0x6032e0 &lt;node2&gt;
 0x6032e0 &lt;node2&gt;:       0x2000000a8     0x6032f0 &lt;node3&gt;
 0x6032f0 &lt;node3&gt;:       0x30000039c     0x603300 &lt;node4&gt;
 0x603300 &lt;node4&gt;:       0x4000002b3     0x603310 &lt;node5&gt;
 0x603310 &lt;node5&gt;:       0x5000001dd     0x603320 &lt;node6&gt;
-0x603320 &lt;node6&gt;:       0x6000001bb     0x0</code></p>
+0x603320 &lt;node6&gt;:       0x6000001bb     0x0</code></pre>
 <p>我超，0x6032e0好眼熟啊，等等，后面怎么跟了个<node2>是不是显示出问题了，我用十进制试一下。。。哎？不会显示node2啊，怎么十六进制就显示错误了。。。等等，node?我超！！</p>
 <p>所以这是个链表！！！</p>
 </blockquote>
@@ -286,7 +271,7 @@
 <p>改变后，要干什么呢？看源码可以看出他把每两个相邻的节点比大小，如果前一个比后一个大，就继续运行，否则BOOM!!!，那么答案不就出来了吗</p>
 </li>
 </ol>
-<pre><code class="language-C">x/12ag 0x6032d0
+<pre class="highlight"><code class="language-C">x/12ag 0x6032d0
 
 (gdb) x/12ag 0x6032d0
 
@@ -301,8 +286,7 @@ x/6ag $rsp + 0x20
 
 0x7ffffffeda60: 0x6032d0 &lt;node1&gt;        0x6032e0 &lt;node2&gt;
 0x7ffffffeda70: 0x6032f0 &lt;node3&gt;        0x603300 &lt;node4&gt;
-0x7ffffffeda80: 0x603310 &lt;node5&gt;        0x603320 &lt;node6&gt;
-</code></pre>
+0x7ffffffeda80: 0x603310 &lt;node5&gt;        0x603320 &lt;node6&gt;</code></pre>
 <h4 id="_12">答案</h4>
 <p>4 3 2 1 6 5</p>
 <blockquote>

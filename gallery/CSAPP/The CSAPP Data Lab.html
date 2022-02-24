@@ -43,7 +43,7 @@
 </blockquote>
 <h2 id="problems">Problems</h2>
 <h3 id="1-bitxor">1. bitXor</h3>
-<pre><code class="language-cpp">/* 
+<pre class="highlight"><code class="language-cpp">/* 
  * bitXor - x^y using only ~ and &amp; 
  *   Example: bitXor(4, 5) = 1
  *   Legal ops: ~ &amp;
@@ -52,26 +52,23 @@
  */
 int bitXor(int x, int y) {
   return 2;
-}
-</code></pre>
+}</code></pre>
 <blockquote>
 <p>很遗憾，我查了很多地方都没有找到符号 ^ 的正确转义（<a href="https://www.onemathematicalcat.org/MathJaxDocumentation/TeXSyntax.htm">https://www.onemathematicalcat.org/MathJaxDocumentation/TeXSyntax.htm</a>），有人知道的话务必留言告诉我</p>
 </blockquote>
-<p>首先理解一下异或是什么
-$$
-A 异或 B = \overline{A}B + \overline{B}A
-$$
+<p>首先理解一下异或是什么<br />
+$$<br />
+A 异或 B = \overline{A}B + \overline{B}A<br />
+$$<br />
 取反和与题目是允许使用的，那么唯一的难点是如何创造出或</p>
 <p>根据摩根定律我们可以把 &amp; 和 | 相互转换得到</p>
-<pre><code class="language-cpp">A | B = ~((~A) &amp; (~B))
-</code></pre>
+<pre class="highlight"><code class="language-cpp">A | B = ~((~A) &amp; (~B))</code></pre>
 <p>所以，可得最终结果</p>
-<pre><code class="language-cpp">int bitXor(int x, int y) {
+<pre class="highlight"><code class="language-cpp">int bitXor(int x, int y) {
   return ~(~(~x &amp; y) &amp; ~(~y &amp; x));
-}
-</code></pre>
+}</code></pre>
 <h3 id="2-tmin">2. tmin</h3>
-<pre><code class="language-cpp">/* 
+<pre class="highlight"><code class="language-cpp">/* 
  * tmin - return minimum two's complement integer 
  *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
  *   Max ops: 4
@@ -79,15 +76,13 @@ $$
  */
 int tmin(void) {
   return 2;
-}
-</code></pre>
+}</code></pre>
 <p>这题很简单啊，不解释</p>
-<pre><code class="language-cpp">int tmin(void) {
+<pre class="highlight"><code class="language-cpp">int tmin(void) {
   return 1 &lt;&lt; 31;
-}
-</code></pre>
+}</code></pre>
 <h3 id="3-istmax">3. isTmax</h3>
-<pre><code class="language-cpp">/*
+<pre class="highlight"><code class="language-cpp">/*
  * isTmax - returns 1 if x is the maximum, two's complement number,
  *     and 0 otherwise 
  *   Legal ops: ! ~ &amp; ^ | +
@@ -96,8 +91,7 @@ int tmin(void) {
  */
 int isTmax(int x) {
   return 2;
-}
-</code></pre>
+}</code></pre>
 <blockquote>
 <p>错误示范：</p>
 <ol>
@@ -106,17 +100,17 @@ int isTmax(int x) {
 </ol>
 </blockquote>
 <p>除了错误示范，经过我的测试，还存在很多匪夷所思的地方，比如</p>
-<pre><code class="language-cpp">int main() {
+<pre class="highlight"><code class="language-cpp">int main() {
     int a;
-    scanf(&quot;%d&quot;, &amp;a);
+    scanf("%d", &amp;a);
     // 0x7FFFFFFF
-    printf(&quot;%d\n&quot;, !!(a + 1));
-    printf(&quot;%d\n&quot;, (a + 1) + (a + 1));
-    printf(&quot;%d\n&quot;, 0x7FFFFFFF);
-    printf(&quot;%d\n&quot;, a);                  // &lt;- 在这里
-    printf(&quot;%d\n&quot;, (a + 1));
-    printf(&quot;%d\n&quot;, !!(a + 1) &amp; !(a + a + 2));
-    printf(&quot;%d\n&quot;, isTmax(a));
+    printf("%d\n", !!(a + 1));
+    printf("%d\n", (a + 1) + (a + 1));
+    printf("%d\n", 0x7FFFFFFF);
+    printf("%d\n", a);                  // &lt;- 在这里
+    printf("%d\n", (a + 1));
+    printf("%d\n", !!(a + 1) &amp; !(a + a + 2));
+    printf("%d\n", isTmax(a));
     return 0;
 }
 /* 输入 */
@@ -128,17 +122,15 @@ int isTmax(int x) {
 0               // &lt;- 在这里
 1
 0
-0
-</code></pre>
+0</code></pre>
 <p>虽然上面的问题没有解决，不过最后还是做出来了，只要把 -1 给排除掉就可以了</p>
-<pre><code class="language-cpp">int isTmax(int x) {
+<pre class="highlight"><code class="language-cpp">int isTmax(int x) {
   int is_negone  = !(x + 1);
   int is_tmax = !(~(x + 1 + x));
   return !is_negone &amp; is_tmax;
-}
-</code></pre>
+}</code></pre>
 <h3 id="4-alloddbits">4. allOddBits</h3>
-<pre><code class="language-cpp">/* 
+<pre class="highlight"><code class="language-cpp">/* 
  * allOddBits - return 1 if all odd-numbered bits in word set to 1
  *   where bits are numbered from 0 (least significant) to 31 (most significant)
  *   Examples allOddBits(0xFFFFFFFD) = 0, allOddBits(0xAAAAAAAA) = 1
@@ -148,29 +140,25 @@ int isTmax(int x) {
  */
 int allOddBits(int x) {
   return 2;
-}
-</code></pre>
+}</code></pre>
 <blockquote>
 <p>\1. Integer constants 0 through 255 (0xFF), inclusive. You are</p>
-<p>not allowed to use big constants such as 0xffffffff.
+<p>not allowed to use big constants such as 0xffffffff.<br />
 </p>
 </blockquote>
 <p>题目中有限制说明，所以不能直接使用 0xAAAAAAAA</p>
 <p>しかし!</p>
-<pre><code class="language-cpp">/* 这样总不能算我作弊吧 */
-int y = 0xAA | (0xAA &lt;&lt; 8) | (0xAA &lt;&lt; 16) | (0xAA &lt;&lt; 24);
-</code></pre>
+<pre class="highlight"><code class="language-cpp">/* 这样总不能算我作弊吧 */
+int y = 0xAA | (0xAA &lt;&lt; 8) | (0xAA &lt;&lt; 16) | (0xAA &lt;&lt; 24);</code></pre>
 <p>然后就很简单了，先把所有为偶数位掩盖掉</p>
-<pre><code class="language-cpp">(x &amp; y)
-</code></pre>
+<pre class="highlight"><code class="language-cpp">(x &amp; y)</code></pre>
 <p>然后判断结果是否与 0xAAAAAAAA 相等，最后答案就出来了</p>
-<pre><code class="language-cpp">int allOddBits(int x) {
+<pre class="highlight"><code class="language-cpp">int allOddBits(int x) {
   int y = 0xAA | (0xAA &lt;&lt; 8) | (0xAA &lt;&lt; 16) | (0xAA &lt;&lt; 24);
   return !((x &amp; y) ^ y);
-}
-</code></pre>
+}</code></pre>
 <h3 id="5-negate">5. negate</h3>
-<pre><code class="language-cpp">/* 
+<pre class="highlight"><code class="language-cpp">/* 
  * negate - return -x 
  *   Example: negate(1) = -1.
  *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
@@ -179,15 +167,13 @@ int y = 0xAA | (0xAA &lt;&lt; 8) | (0xAA &lt;&lt; 16) | (0xAA &lt;&lt; 24);
  */
 int negate(int x) {
   return 2;
-}
-</code></pre>
+}</code></pre>
 <p>简单题，补码的定义</p>
-<pre><code class="language-cpp">int negate(int x) {
+<pre class="highlight"><code class="language-cpp">int negate(int x) {
   return ~x + 1;
-}
-</code></pre>
+}</code></pre>
 <h3 id="6-isasciidigit">6. isAsciiDigit</h3>
-<pre><code class="language-cpp">/* 
+<pre class="highlight"><code class="language-cpp">/* 
  * isAsciiDigit - return 1 if 0x30 &lt;= x &lt;= 0x39 (ASCII codes for characters '0' to '9')
  *   Example: isAsciiDigit(0x35) = 1.
  *            isAsciiDigit(0x3a) = 0.
@@ -198,21 +184,19 @@ int negate(int x) {
  */
 int isAsciiDigit(int x) {
   return 2;
-}
-</code></pre>
+}</code></pre>
 <p>我的思路可能会比较奇怪</p>
 <p>首先检验是否满足 0x30 的部分且其他高位为 0，然后检验是否小于 0x39</p>
-<pre><code class="language-cpp">int isAsciiDigit(int x) {
+<pre class="highlight"><code class="language-cpp">int isAsciiDigit(int x) {
   /* is bigger than 0x30 and smaller than 0x3F */
   int is_upper = !((x &amp; ~0x0F) ^ 0x30);
   /* is smaller than 0x39 */
   int is_lower = !((x &amp; 0x0F) + 0x06 &amp; 0xF0);
   return is_upper &amp; is_lower;
-}
-</code></pre>
+}</code></pre>
 <p>Rua~~</p>
 <h3 id="7-conditional">7. conditional</h3>
-<pre><code class="language-cpp">/* 
+<pre class="highlight"><code class="language-cpp">/* 
  * conditional - same as x ? y : z 
  *   Example: conditional(2,4,5) = 4
  *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
@@ -221,25 +205,23 @@ int isAsciiDigit(int x) {
  */
 int conditional(int x, int y, int z) {
   return 2;
-}
-</code></pre>
+}</code></pre>
 <p>这道题的最终答案可以说我最满意了，很对称，很优美</p>
 <p>思路是自然而然冒出来的，灵感爆发了属于是</p>
 <blockquote>
 <p>最终输出很自然的想到：y 和 z 应该是或的关系，只要让一个变成 0 就行了</p>
 <p>输入的处理也很自然的想到：让 x = 0 和 x != 0 自然的区分开</p>
 </blockquote>
-<pre><code class="language-cpp">int conditional(int x, int y, int z) {
+<pre class="highlight"><code class="language-cpp">int conditional(int x, int y, int z) {
   /* x =  0 =&gt; 0xFFFFFFFF
      x != 0 =&gt; 0x00 */
   int is_zero = ~!x + 1;
   int is_y = ~is_zero &amp; y;
   int is_z = is_zero  &amp; z;
   return is_y | is_z;
-}
-</code></pre>
+}</code></pre>
 <h3 id="8-islessorequal">8. isLessOrEqual</h3>
-<pre><code class="language-cpp">/* 
+<pre class="highlight"><code class="language-cpp">/* 
  * isLessOrEqual - if x &lt;= y  then return 1, else return 0 
  *   Example: isLessOrEqual(4,5) = 1.
  *   Legal ops: ! ~ &amp; ^ | + &lt;&lt; &gt;&gt;
@@ -248,12 +230,11 @@ int conditional(int x, int y, int z) {
  */
 int isLessOrEqual(int x, int y) {
   return 2;
-}
-</code></pre>
+}</code></pre>
 <p>很简单啊，做个“减法”就好了</p>
 <p>简单个毛啊，好难，要考虑 Tmin 还要考虑符号的正负性</p>
 <p>不过还是做出来了，嘿嘿</p>
-<pre><code class="language-cpp">int isLessOrEqual(int x, int y) {
+<pre class="highlight"><code class="language-cpp">int isLessOrEqual(int x, int y) {
   int neg_x = ~x + 1;
   int neg_y = ~y + 1;
   /* if x or y is neg, turn to pos */
@@ -270,8 +251,7 @@ int isLessOrEqual(int x, int y) {
   int neg_neg = (!sign_x &amp; !sign_y) &amp; !(~negtpos_x + 1 + negtpos_y &amp; (0x80 &lt;&lt; 24));
   /* return */
   return pos_pos | pos_neg | neg_pos | neg_neg;
-}
-</code></pre>
+}</code></pre>
 <p>不过还是有问题，符号数超了</p>
 <blockquote>
 <p>dlc:bits.c:248:isLessOrEqual: Warning: 37 operators exceeds max of 24</p>
@@ -289,7 +269,7 @@ int isLessOrEqual(int x, int y) {
 <li>!a &amp; !b</li>
 </ol>
 </blockquote>
-<pre><code class="language-cpp">int isLessOrEqual(int x, int y) {
+<pre class="highlight"><code class="language-cpp">int isLessOrEqual(int x, int y) {
   /* pos =&gt; 0 | neg =&gt; 1 */
   int sign_x = x &gt;&gt; 31;
   int sign_y = y &gt;&gt; 31;
@@ -306,10 +286,9 @@ int isLessOrEqual(int x, int y) {
   int neg_neg = ( sign_x &amp;  sign_y) &amp; !(~negtpos_x + 1 + negtpos_y &gt;&gt; 31);
   /* return */
   return pos_pos | neg_pos | neg_neg;
-}
-</code></pre>
+}</code></pre>
 <h3 id="9-logicalneg">9. logicalNeg</h3>
-<pre><code class="language-cpp">/* 
+<pre class="highlight"><code class="language-cpp">/* 
  * logicalNeg - implement the ! operator, using all of 
  *              the legal operators except !
  *   Examples: logicalNeg(3) = 0, logicalNeg(0) = 1
@@ -319,16 +298,14 @@ int isLessOrEqual(int x, int y) {
  */
 int logicalNeg(int x) {
   return 2;
-}
-</code></pre>
+}</code></pre>
 <p>看符号就行了，一个数的取正负后，首位必定是 1 或者是 0</p>
 <p>对于特殊情况 Tmin，只要声称所有负数都为 0 就可以了</p>
-<pre><code class="language-cpp">int logicalNeg(int x) {
+<pre class="highlight"><code class="language-cpp">int logicalNeg(int x) {
   return (x &gt;&gt; 31 | (x ^ ~x + 1) &gt;&gt; 31) + 1;
-}
-</code></pre>
+}</code></pre>
 <h3 id="10-howmanybits">10. howManyBits</h3>
-<pre><code class="language-cpp">/* howManyBits - return the minimum number of bits required to represent x in
+<pre class="highlight"><code class="language-cpp">/* howManyBits - return the minimum number of bits required to represent x in
  *             two's complement
  *  Examples: howManyBits(12) = 5
  *            howManyBits(298) = 10
@@ -342,8 +319,7 @@ int logicalNeg(int x) {
  */
 int howManyBits(int x) {
   return 0;
-}
-</code></pre>
+}</code></pre>
 <p>很遗憾，我尼玛题目都看不懂</p>
 <p>不过，我看别人的解答，再加上自己的猜测，勉强给出了一个解释（虽然我仍然不清楚其中的逻辑）</p>
 <blockquote>
@@ -358,7 +334,7 @@ int howManyBits(int x) {
 <p>然后看前16位是否有1？若有，起码需要16位，故去掉后16位(右移16)，若没有，不移位</p>
 <p>以此类推，形成二分法</p>
 <p>此题我暂且保留意见，因为我还是没太搞懂它在让我干什么</p>
-<pre><code class="language-cpp">int howManyBits(int x) {
+<pre class="highlight"><code class="language-cpp">int howManyBits(int x) {
   int sign = x &gt;&gt; 31;
   /* use conditional() before */
   {
@@ -380,10 +356,9 @@ int howManyBits(int x) {
   x = x &gt;&gt; b1;
   int b0 = x;
   return b16 + b8 + b4 + b2 + b1 + b0 + 1;
-}
-</code></pre>
+}</code></pre>
 <h3 id="11-floatscale2">11. floatScale2</h3>
-<pre><code class="language-cpp">/* 
+<pre class="highlight"><code class="language-cpp">/* 
  * floatScale2 - Return bit-level equivalent of expression 2*f for
  *   floating point argument f.
  *   Both the argument and result are passed as unsigned int's, but
@@ -396,15 +371,14 @@ int howManyBits(int x) {
  */
 unsigned floatScale2(unsigned uf) {
   return 2;
-}
-</code></pre>
+}</code></pre>
 <p>说实话，乍一看会很懵，但其实就是考察你非常简单的知识点</p>
 <p>我刚开始写的时候非常的乱，各种情况没考虑到</p>
 <p>然后删了重写，一遍过（做法注释写的很清楚了）</p>
 <blockquote>
 <p>一定要记得使用 fshow，真的。。。它真的好好用。。。我哭死。。。</p>
 </blockquote>
-<pre><code class="language-cpp">unsigned floatScale2(unsigned uf) {
+<pre class="highlight"><code class="language-cpp">unsigned floatScale2(unsigned uf) {
   unsigned bias_e = 0xFF;
   unsigned bias_m = (0x7F &lt;&lt; 16) + (0xFF &lt;&lt; 8) + 0xFF;
   unsigned sign = uf &gt;&gt; 31;
@@ -429,10 +403,9 @@ unsigned floatScale2(unsigned uf) {
     e = e + 1;
 
   return (sign &lt;&lt; 31) + (e &lt;&lt; 23) + m;
-}
-</code></pre>
+}</code></pre>
 <h3 id="12-floatfloat2int">12. floatFloat2Int</h3>
-<pre><code class="language-cpp">/* 
+<pre class="highlight"><code class="language-cpp">/* 
  * floatFloat2Int - Return bit-level equivalent of expression (int) f
  *   for floating point argument f.
  *   Argument is passed as unsigned int, but
@@ -446,11 +419,10 @@ unsigned floatScale2(unsigned uf) {
  */
 int floatFloat2Int(unsigned uf) {
   return 2;
-}
-</code></pre>
+}</code></pre>
 <p>这题我做出来了，但还是不太满意</p>
 <p>要注意一下 1 &lt;&lt; x, (x &gt;= 32) 就溢出了，一定要小心，其他情况下直接输入给 int 就好了，让 int 自己判断</p>
-<pre><code class="language-cpp">int floatFloat2Int(unsigned uf) {
+<pre class="highlight"><code class="language-cpp">int floatFloat2Int(unsigned uf) {
   unsigned bias_e = 0xFF;
   unsigned bias_m = (0x7F &lt;&lt; 16) + (0xFF &lt;&lt; 8) + 0xFF;
   unsigned sign = uf &gt;&gt; 31;
@@ -476,10 +448,9 @@ int floatFloat2Int(unsigned uf) {
     res = -res;
 
   return res;
-}
-</code></pre>
+}</code></pre>
 <h3 id="13-floatpower2">13. floatPower2</h3>
-<pre><code class="language-cpp">/* 
+<pre class="highlight"><code class="language-cpp">/* 
  * floatPower2 - Return bit-level equivalent of the expression 2.0^x
  *   (2.0 raised to the power x) for any 32-bit integer x.
  *
@@ -494,10 +465,9 @@ int floatFloat2Int(unsigned uf) {
  */
 unsigned floatPower2(int x) {
   return 2;
-}
-</code></pre>
+}</code></pre>
 <p>思路很简单，就是往比特位上置一个 1 就好了，<del>唯一的难点是找到这个 1 的位置，因为其他全是 0 （有 1 吗）</del></p>
-<pre><code class="language-cpp">unsigned floatPower2(int x) {
+<pre class="highlight"><code class="language-cpp">unsigned floatPower2(int x) {
   unsigned res = 0;
 
   /* the minimun is 2^(-(1 - 127)) * 2^(-23) */
@@ -523,8 +493,7 @@ unsigned floatPower2(int x) {
   }
 
   return res;
-}
-</code></pre>
+}</code></pre>
 <h2 id="the-end">The End</h2>
 <p><img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/datalab/2021061121474426.png" /></p>
 <p>这两天虽然不是一直在做题，但还是做了好久好久，终于做完了，爽到！</p>

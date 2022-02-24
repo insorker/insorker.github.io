@@ -47,7 +47,7 @@
 <p>什么意思呢？就是代码不需要做实际存储，我们只要知道hit, miss, eviction发生了多少次。</p>
 <p>什么意思呢？就是只要能明白hit, miss, eviction的逻辑就可以了。</p>
 <p>好的，那么逻辑是什么，我在我的代码里注释了一下（因为看别人的攻略也没能把意思表示清楚，我也只能这么解释一下）</p>
-<pre><code class="language-C">switch (tl.op) {
+<pre class="highlight"><code class="language-C">switch (tl.op) {
         case 'I':
                 continue;
         case 'L':
@@ -57,7 +57,7 @@
                         /* store: 内存中没有，从磁盘缓存 */
                         cache_store(ca);
                 }
-                /* 也就是说这儿的&quot;L&quot;很简单，就是CPU从内存中读取，不命中就从磁盘读到内存，然后在读到CPU */
+                /* 也就是说这儿的"L"很简单，就是CPU从内存中读取，不命中就从磁盘读到内存，然后在读到CPU */
                 break;
         case 'S':
                 /* 从CPU中存到内存中 */
@@ -68,7 +68,7 @@
                         cache_store(ca);
                 }
                 /* 这儿的存是从CPU存到内存，但是请注意，这儿分两种情况 */
-                /*     1. 不命中，那么要先从磁盘读到内存（和&quot;L&quot;的操作是一样的） */
+                /*     1. 不命中，那么要先从磁盘读到内存（和"L"的操作是一样的） */
                 /*     2. 命中，等价于1.结束，不需要任何操作 */
                 /* 然后，从CPU中存到内存中，但是问题是从CPU写到内存不涉及任何hit,miss,eviction */
                 /* 所以就很扯淡了，导致和前一个操作一模一样 */
@@ -82,10 +82,9 @@
                         cache_store(ca);
                 }
                 break;
-}
-</code></pre>
+}</code></pre>
 <p>然后就是cache的具体实现，PPT里面给了一些结构可以参考一下，比较简单。</p>
-<pre><code class="language-C">static unsigned s, E, b, S;
+<pre class="highlight"><code class="language-C">static unsigned s, E, b, S;
 static char trace_file[200];
 static unsigned hit_count, miss_count, eviction_count;
 
@@ -106,12 +105,11 @@ typedef struct cache_address {
         int tag_bits;
         int set_index;
         int block_offset;
-}Cache_Address;
-</code></pre>
+}Cache_Address;</code></pre>
 <p>还有一个就是如何选择牺牲页，牺牲页PPT里给了两个问句：队列？时间戳？</p>
 <p>这里选择了用时间戳的做法，当然我的实现方法是有问题的，如果一个block长期不被命中，那么时间戳有可能变为负的，当然在测试样例中没有出问题就算了。</p>
 <p>其他的工作不过是搬砖吧了，Google一下都可以出来。我的完整代码如下：</p>
-<pre><code class="language-C">#include &quot;cachelab.h&quot;
+<pre class="highlight"><code class="language-C">#include "cachelab.h"
 #include &lt;unistd.h&gt;
 #include &lt;getopt.h&gt;
 #include &lt;stdlib.h&gt;
@@ -181,24 +179,24 @@ int main(int argc, char** argv)
 }
 
 static void print_help(char** argv) {
-    printf(&quot;Usage: %s [-hv] -s &lt;num&gt; -E &lt;num&gt; -b &lt;num&gt; -t &lt;file&gt;\n&quot;
-            &quot;Options:\n&quot;
-            &quot;  -h         Print this help message.\n&quot;
-            &quot;  -v         Optional verbose flag.\n&quot;
-            &quot;  -s &lt;num&gt;   Number of set index bits.\n&quot;
-            &quot;  -E &lt;num&gt;   Number of lines per set.\n&quot;
-            &quot;  -b &lt;num&gt;   Number of block offset bits.\n&quot;
-            &quot;  -t &lt;file&gt;  Trace file.\n\n&quot;
-            &quot;Examples:\n&quot;
-            &quot;  linux&gt;  %s -s 4 -E 1 -b 4 -t traces/yi.trace\n&quot;
-            &quot;  linux&gt;  %s -v -s 8 -E 2 -b 4 -t traces/yi.trace\n&quot;,
+    printf("Usage: %s [-hv] -s &lt;num&gt; -E &lt;num&gt; -b &lt;num&gt; -t &lt;file&gt;\n"
+            "Options:\n"
+            "  -h         Print this help message.\n"
+            "  -v         Optional verbose flag.\n"
+            "  -s &lt;num&gt;   Number of set index bits.\n"
+            "  -E &lt;num&gt;   Number of lines per set.\n"
+            "  -b &lt;num&gt;   Number of block offset bits.\n"
+            "  -t &lt;file&gt;  Trace file.\n\n"
+            "Examples:\n"
+            "  linux&gt;  %s -s 4 -E 1 -b 4 -t traces/yi.trace\n"
+            "  linux&gt;  %s -v -s 8 -E 2 -b 4 -t traces/yi.trace\n",
             argv[0], argv[0], argv[0]);
 }
 
 
 static void optarg_check(char* optarg, char** argv) {
     if (optarg == NULL) {
-        printf(&quot;%s: Missing required command line argument\n&quot;, argv[0]);
+        printf("%s: Missing required command line argument\n", argv[0]);
         print_help(argv);
         exit(0);
     }
@@ -206,7 +204,7 @@ static void optarg_check(char* optarg, char** argv) {
 
 static void sEb_check(char** argv) {
     if (s &lt;= 0 || E &lt;= 0 || b &lt;= 0) {
-        printf(&quot;%s: Missing required command line argument\n&quot;, argv[0]);
+        printf("%s: Missing required command line argument\n", argv[0]);
         print_help(argv);
         exit(0);
     }
@@ -214,12 +212,12 @@ static void sEb_check(char** argv) {
 
 static void parse_args(int argc, char** argv) {
     int opt, trace_disp = 0;
-    while ( (opt = getopt(argc, argv, &quot;hvs:E:b:t:&quot;)) != -1 ) {
+    while ( (opt = getopt(argc, argv, "hvs:E:b:t:")) != -1 ) {
         switch (opt) {
-            case 's': optarg_check(optarg, argv); sscanf(optarg, &quot;%u&quot;, &amp;s); break;
-            case 'E': optarg_check(optarg, argv); sscanf(optarg, &quot;%u&quot;, &amp;E); break;
-            case 'b': optarg_check(optarg, argv); sscanf(optarg, &quot;%u&quot;, &amp;b); break;
-            case 't': optarg_check(optarg, argv); sscanf(optarg, &quot;%s&quot;, trace_file); break;
+            case 's': optarg_check(optarg, argv); sscanf(optarg, "%u", &amp;s); break;
+            case 'E': optarg_check(optarg, argv); sscanf(optarg, "%u", &amp;E); break;
+            case 'b': optarg_check(optarg, argv); sscanf(optarg, "%u", &amp;b); break;
+            case 't': optarg_check(optarg, argv); sscanf(optarg, "%s", trace_file); break;
             case 'v': trace_disp = 1; break;
             case 'h':
             default:
@@ -229,16 +227,16 @@ static void parse_args(int argc, char** argv) {
     sEb_check(argv);
     S = 1 &lt;&lt; s;
 
-    FILE* pFile = fopen(trace_file, &quot;r&quot;);
+    FILE* pFile = fopen(trace_file, "r");
 
     if (pFile == NULL) {
-        printf(&quot;%s: No such file or director\n&quot;, trace_file);
+        printf("%s: No such file or director\n", trace_file);
         exit(0);
     }
     else if (trace_disp) {
         Trace_Line trace;
-        while (fscanf(pFile, &quot; %c %llx,%d&quot;, &amp;trace.op, &amp;trace.addr, &amp;trace.size) &gt; 0) {
-            printf(&quot;%c %llx,%d\n&quot;, trace.op, trace.addr, trace.size);
+        while (fscanf(pFile, " %c %llx,%d", &amp;trace.op, &amp;trace.addr, &amp;trace.size) &gt; 0) {
+            printf("%c %llx,%d\n", trace.op, trace.addr, trace.size);
         }
     }
 
@@ -266,15 +264,15 @@ void cache_destructor() {
 }
 
 void parse_trace_line() {
-    FILE* pFile = fopen(trace_file, &quot;r&quot;);
+    FILE* pFile = fopen(trace_file, "r");
 
     Trace_Line tl;
     Cache_Address ca;
-    while (fscanf(pFile, &quot; %c %llx,%d&quot;, &amp;tl.op, &amp;tl.addr, &amp;tl.size) &gt; 1) {
+    while (fscanf(pFile, " %c %llx,%d", &amp;tl.op, &amp;tl.addr, &amp;tl.size) &gt; 1) {
         parse_trace_address(tl.addr, &amp;ca);
         #if db_cache_address
-            printf(&quot;%c %llx\n&quot;, tl.op, tl.addr);
-            printf(&quot;%d %d %d\n&quot;, ca.tag_bits, ca.set_index, ca.block_offset);
+            printf("%c %llx\n", tl.op, tl.addr);
+            printf("%d %d %d\n", ca.tag_bits, ca.set_index, ca.block_offset);
         #endif
 
         switch (tl.op) {
@@ -287,7 +285,7 @@ void parse_trace_line() {
                     /* store: 内存中没有，从磁盘缓存 */
                     cache_store(ca);
                 }
-                /* 也就是说这儿的&quot;L&quot;很简单，就是CPU从内存中读取，不命中就从磁盘读到内存，然后在读到CPU */
+                /* 也就是说这儿的"L"很简单，就是CPU从内存中读取，不命中就从磁盘读到内存，然后在读到CPU */
                 break;
             case 'S':
                 /* 从CPU中存到内存中 */
@@ -298,7 +296,7 @@ void parse_trace_line() {
                     cache_store(ca);
                 }
                 /* 这儿的存是从CPU存到内存，但是请注意，这儿分两种情况 */
-                /*     1. 不命中，那么要先从磁盘读到内存（和&quot;L&quot;的操作是一样的） */
+                /*     1. 不命中，那么要先从磁盘读到内存（和"L"的操作是一样的） */
                 /*     2. 命中，等价于1.结束，不需要任何操作 */
                 /* 然后，从CPU中存到内存中，但是问题是从CPU写到内存不涉及任何hit,miss,eviction */
                 /* 所以就很扯淡了，导致和前一个操作一模一样 */
@@ -316,15 +314,15 @@ void parse_trace_line() {
         update_stp();
 
         #if db_print_cache_line
-            printf(&quot;line %d: &quot;, ca.set_index);
+            printf("line %d: ", ca.set_index);
             for (int i = 0; i &lt; E; i ++ )
-                printf(&quot;%d &quot;, cache[ca.set_index][i].valid_bit);
-            printf(&quot;\n&quot;);
+                printf("%d ", cache[ca.set_index][i].valid_bit);
+            printf("\n");
         #endif
 
         #if db_printSummary
             printSummary(hit_count, miss_count, eviction_count);
-            printf(&quot;\n&quot;);
+            printf("\n");
         #endif
     }
 
@@ -390,8 +388,7 @@ void update_stp() {
         for (int j = 0; j &lt; E; j ++ )
             if (cache[i][j].valid_bit == 1)
                 cache[i][j].stp_cnt ++ ;
-}
-</code></pre>
+}</code></pre>
 <p>写的长一点是为了整体好看一点(#^ . ^#)</p>
 <h3 id="part-b">Part B</h3>
 <p>这个问看起来非常简单，但是实际做起来还是非常难的</p>
@@ -405,20 +402,19 @@ void update_stp() {
 <p>那么每次读入8×8至少16次不命中（8行A + 8行B），然后32×32又可以分出4×4个8×8的小块</p>
 <p>那么理论上最小值就是16×16 == 256次miss</p>
 <p>那么实操一下，结果却得到了300多次miss</p>
-<pre><code class="language-C">#if demo0
+<pre class="highlight"><code class="language-C">#if demo0
     int i, j;
 
     for (i = 0; i &lt; 8; i ++ )
         for (j = 0; j &lt; 8; j ++ )
             *(pb + j * n + i) = *(pa + i * n + j);
-#endif
-</code></pre>
+#endif</code></pre>
 <p>究其原因，发现32组读入8组A、8组B，并不是如同童话般各自占一行，而是发生了冲突</p>
 <p>那么冲突的原因是什么呢？</p>
 <p>让我们想想，32×32，每行有32个int，32 / 8 = 4，那么矩阵中的第0行将会映射到cache中前4组，同理第1行会映射到第4组至第7组。。。一直到第7行映射到第28组至31组（是不是特别巧，正好cache一共32组）</p>
 <p>那么矩阵A和矩阵B之间就发生了冲突，比如矩阵A的第0行读入，然后写入矩阵B第0行就把A给覆盖了，需要重新读入A的第0行，这就造成了多余的miss，同理其他</p>
 <p>这时就有一种非常取巧的解决方法，就是把矩阵A的第0行存入寄存器（这样就不会被矩阵B覆盖了），然后就非常轻松的解决了冲突</p>
-<pre><code class="language-C">#if demo1
+<pre class="highlight"><code class="language-C">#if demo1
     int i;
     int x0, x1, x2, x3, x4, x5, x6, x7;
 
@@ -441,40 +437,39 @@ void update_stp() {
         *(pb + 6 * n + i) = x6;
         *(pb + 7 * n + i) = x7;
     }
-#endif
-</code></pre>
+#endif</code></pre>
 <p>但是请等一下，结果仍然显示287次miss（我不记得具体数字了），这是什么原因呢？</p>
 <p>请你再想一想刚才的问题，冲突真的解决了吗？我们发现矩阵B被读入后，我们想读入矩阵A就必然会覆盖矩阵B（仅存在在对角线上），这造成了一些多的miss</p>
 <p>虽然答案已经满分了，但我们还是想再冲一冲，于是一种非常神奇的方法出现了，见下图</p>
 <blockquote>
 <p><strong>说明</strong></p>
-<p>网格：
-  网格对应一个cache
-  行对应set，即s=3，共8组
-  列对应block，默认E=1，b=5，即block大小为32字节，可存储8个int，故8列
-蓝色：
-  矩阵A被存储入cache
-红色：
-  矩阵B被存储入cache
-黄色：
-  已翻转的坐标
-坐标：
-  网格坐标同二维数组，左上角为0,0
-  绿色数组（无论深浅），均显示的是矩阵A存入的坐标
+<p>网格：<br />
+  网格对应一个cache<br />
+  行对应set，即s=3，共8组<br />
+  列对应block，默认E=1，b=5，即block大小为32字节，可存储8个int，故8列<br />
+蓝色：<br />
+  矩阵A被存储入cache<br />
+红色：<br />
+  矩阵B被存储入cache<br />
+黄色：<br />
+  已翻转的坐标<br />
+坐标：<br />
+  网格坐标同二维数组，左上角为0,0<br />
+  绿色数组（无论深浅），均显示的是矩阵A存入的坐标<br />
   默认矩阵B如果被存入（即网格标红），则其坐标与网格坐标一致</p>
 </blockquote>
-<p><img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/1.png" />
-<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/2.png" />
-<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/3.png" />
-<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/4.png" />
-<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/5.png" />
-<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/6.png" />
-<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/7.png" />
-<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/8.png" />
+<p><img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/1.png" /><br />
+<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/2.png" /><br />
+<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/3.png" /><br />
+<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/4.png" /><br />
+<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/5.png" /><br />
+<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/6.png" /><br />
+<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/7.png" /><br />
+<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/8.png" /><br />
 <img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/cachelab/9.png" /></p>
 <p>这样就OK了</p>
 <p>代码如下</p>
-<pre><code class="language-C">#if fastest32
+<pre class="highlight"><code class="language-C">#if fastest32
     int i, j, tmp;
     int x0, x1, x2, x3, x4, x5, x6, x7;
 
@@ -510,8 +505,7 @@ void update_stp() {
             *(pb + (i - j) * n + j) = tmp;
         }
     }
-#endif
-</code></pre>
+#endif</code></pre>
 <h4 id="6464">64×64</h4>
 <p>这个已经超过了我的能力范围，我只能勉强看懂别人的思路</p>
 <h4 id="6167">61×67</h4>
