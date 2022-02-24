@@ -19,7 +19,7 @@
             
     <div class="content-header">
         <div class="post-title">
-            <h1>The CSAPP Attack Lab</h1>
+            The CSAPP Attack Lab
         </div>
         <div class="post-meta">
             <span>insorker</span>
@@ -52,7 +52,7 @@
 <p>很简单的题，关键看你理不理解概念（指ret）</p>
 <p>详见书上P166关于ret的解释，ret相当于把栈帧底部的地址给返回了，所以覆盖这个地址就行了。</p>
 <p>另外，BUFFER_SIZE的大小也并不一定是40，但不影响做题，详见书上P195最后，和P196上面的那张图片。</p>
-<ol>
+<ol start="2">
 <li>Level 2</li>
 </ol>
 <p>这里我还是有点疑问</p>
@@ -61,7 +61,7 @@
 <li>push到底把这个地址塞到哪里去了啊</li>
 </ol>
 <p>上面的问题看别人的笔记并没有给出解释，表示很疑惑</p>
-<ol>
+<ol start="3">
 <li>Level 3</li>
 </ol>
 <p>关键是字符串的位置选在哪里，选在上一个栈帧里面肯定不会有错，但是为什么放在buf里不行我还是没想明白。</p>
@@ -74,7 +74,7 @@
 <p>在vim里面</p>
 <pre class="highlight"><code>/48 89 c7</code></pre>
 <p>可以找到三个处引用（其实四处），然后三个里面只有一个在48 89 c7的后面借了一个90（即nop），所以。。。</p>
-<ol>
+<ol start="2">
 <li>Level 3</li>
 </ol>
 <blockquote>

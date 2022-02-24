@@ -19,7 +19,7 @@
             
     <div class="content-header">
         <div class="post-title">
-            <h1>The CSAPP Bomb Lab</h1>
+            The CSAPP Bomb Lab
         </div>
         <div class="post-meta">
             <span>insorker</span>
@@ -46,7 +46,7 @@
 <blockquote>
 <p><a href="http://beej.us/guide/bggdb/">http://beej.us/guide/bggdb/</a></p>
 </blockquote>
-<ol>
+<ol start="2">
 <li>如果是第一次学会 gdb 的使用，可能还有点使不上劲，不建议直接用书上的<code>disas</code>，推荐使用<code>layout</code>，可以上网百度，或者 help 一下，或者使用以下简单的指令</li>
 </ol>
 <blockquote>
@@ -62,7 +62,7 @@
    Ctrl + x，再按2：双窗口模式，显示两个窗口</p>
 <p>​  Ctrl + x，再按a：回到传统模式，即退出layout，回到执行layout之前的调试窗口。</p>
 </blockquote>
-<ol>
+<ol start="3">
 <li>学习一些输出的小诀窍，比如搜索 gdb x，还有如下</li>
 </ol>
 <pre class="highlight"><code class="language-c">print *(char *)$rax</code></pre>
@@ -263,7 +263,7 @@
 <p>我超，0x6032e0好眼熟啊，等等，后面怎么跟了个<node2>是不是显示出问题了，我用十进制试一下。。。哎？不会显示node2啊，怎么十六进制就显示错误了。。。等等，node?我超！！</p>
 <p>所以这是个链表！！！</p>
 </blockquote>
-<ol>
+<ol start="5">
 <li>
 <p>链表里的下标全部存到了 $rsp + 0x20 的位置（不信你试试啊），然后他找到0x20和0x28的位置，修改0x6032d0内存中链表的第二个量，即下个位置的链接，把0行0x28接到了0x20后面，嘿嘿，简单来说就是链表的顺序被改变了（当然尾部仍然指向0）</p>
 </li>
