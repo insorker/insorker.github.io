@@ -9,7 +9,22 @@
     <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
     <link href="/css/yori.css" rel="stylesheet" />
     
-    <link href="/css/prism.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
 
 </head>
 <body>
@@ -26,7 +41,8 @@
             <span> | Posted on 2021-06-09</span>
         </div>
     </div>
-    <div><h1 id="the-csapp-data-lab">The CSAPP Data Lab</h1>
+    <div class="markdown-body">
+        <h1 id="the-csapp-data-lab">The CSAPP Data Lab</h1>
 <ul>
 <li>insorker</li>
 <li>2021/6/9</li>
@@ -498,7 +514,8 @@ unsigned floatPower2(int x) {
 <p><img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/datalab/2021061121474426.png" /></p>
 <p>这两天虽然不是一直在做题，但还是做了好久好久，终于做完了，爽到！</p>
 <p>其实题目并不是很难，也就是考察你对数的每一位的理解。</p>
-<p>下一站：Bomb Lab</p></div>
+<p>下一站：Bomb Lab</p>
+    </div>
     
             
 
@@ -508,10 +525,7 @@ unsigned floatPower2(int x) {
             
         </div>
         
-
         
-    <script src="/js/prism.js"></script>
-
     
     </div>
 </body>

@@ -9,7 +9,22 @@
     <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
     <link href="/css/yori.css" rel="stylesheet" />
     
-    <link href="/css/prism.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
 
 </head>
 <body>
@@ -26,7 +41,8 @@
             <span> | Posted on 2022-01-01</span>
         </div>
     </div>
-    <div><h1 id="the-csapp-cache-lab">The CSAPP Cache Lab</h1>
+    <div class="markdown-body">
+        <h1 id="the-csapp-cache-lab">The CSAPP Cache Lab</h1>
 <ul>
 <li>insorker</li>
 <li>2022/1/1</li>
@@ -512,7 +528,8 @@ void update_stp() {
 <p>这个又过于简单，因为这里面也没什么规律，一个小block一个小block的试试就行了</p>
 <h2 id="the-end">The End</h2>
 <p>痛快</p>
-<p>下一站：Malloc Lab</p></div>
+<p>下一站：Malloc Lab</p>
+    </div>
     
             
 
@@ -522,10 +539,7 @@ void update_stp() {
             
         </div>
         
-
         
-    <script src="/js/prism.js"></script>
-
     
     </div>
 </body>

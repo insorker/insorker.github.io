@@ -9,7 +9,22 @@
     <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
     <link href="/css/yori.css" rel="stylesheet" />
     
-    <link href="/css/prism.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
 
 </head>
 <body>
@@ -26,7 +41,8 @@
             <span> | Posted on 2022-02-21</span>
         </div>
     </div>
-    <div><h1 id="6s081system-calls">6.S081「system calls」</h1>
+    <div class="markdown-body">
+        <h1 id="6s081system-calls">6.S081「system calls」</h1>
 <ul>
 <li>insorker</li>
 <li>2022/2/24</li>
@@ -44,12 +60,11 @@
 <pre class="highlight"><code class="language-shell">la sp, stack0</code></pre>
 <p>la即load address，把stack0的地址加载到sp中</p>
 <pre class="highlight"><code class="language-C">__attribute__ ((aligned (16))) char stack0[4096 * NCPU];</code></pre>
-<p>内存对齐，将stack0的每个char按照64位的方式对齐（每个char的地址都</p>
-<p>是8的整数倍）</p>
+<p>内存对齐，将stack0的每个char按照64位的方式对齐（每个char的地址都是8的整数倍）</p>
 <blockquote>
 <p><a href="https://nshipster.cn/__attribute__/">__attribute__定义</a></p>
 <p><a href="https://blog.csdn.net/fengbingchun/article/details/81321419">__attribute__((aligned(n)))</a></p>
-<p>[C++内存对齐](</p>
+<p><a href="https://zhuanlan.zhihu.com/p/30007037">C++内存对齐</a></p>
 </blockquote>
 <pre class="highlight"><code class="language-shell">li a0, 1024*4</code></pre>
 <p>li即Load immediate，把1024*4加载到a0中</p>
@@ -58,10 +73,11 @@
 <p>mhartid貌似是hart的数目。hart(hardware thread)指硬件线程数，貌似就是CPU线程数，比如双核四线程，那么就是4</p>
 <pre class="highlight"><code class="language-shell">addi a1, a1, 1
 mul a0, a0, a1
-add sp, sp, a0</code></pre>
-<p>a1 = a1 + 1</p>
-<p>a0 = a0 * a1</p>
-<p>sp = sp * a0</p>
+add sp, sp, a0
+
+# a1 = a1 + 1
+# a0 = a0 * a1
+# sp = sp * a0</code></pre>
 <h4 id="startc">start.c解读</h4>
 <p>关于mstatus，这一贴一段链接，感觉不是目前能看的懂得</p>
 <blockquote>
@@ -69,9 +85,7 @@ add sp, sp, a0</code></pre>
 </blockquote>
 <p>剩下内容先跳过。。。知道是机器模式下初始化，程序计数器放在了main，然后进入监管者模式就行了</p>
 <h4 id="mainc">main.c解读</h4>
-<blockquote>
-<p>// start() jumps here in supervisor mode on all CPUs.</p>
-</blockquote>
+<pre class="highlight"><code class="language-C">// start() jumps here in supervisor mode on all CPUs.</code></pre>
 <p>大概就是开启了一些东西，然后调用userinit执行一些initcode，由于这时候还没有文件系统，所以只能把二进制文件写在数组里，相对应的原文就是initcode.S (user/initcode.S:1)。它用exec去执行Init (user/init.c:15)进入main函数，开一个console的文件，dup(0)两次打开stdout和stderr，然后开sh整个系统就算是打开了</p>
 <h3 id="sections-43-and-44">Sections 4.3 and 4.4</h3>
 <p>主要讲的是如何将user call转到system call</p>
@@ -239,7 +253,7 @@ sys_sysinfo(void)
 }</code></pre>
 <h4 id="_4">坑</h4>
 <p>如果你全部完成后编译出了这样的问题</p>
-<pre class="highlight"><code>make: *** No rule to make target 'user/_trace', needed by 'fs.img'. Stop.</code></pre>
+<pre class="highlight"><code class="language-shell">make: *** No rule to make target 'user/_trace', needed by 'fs.img'. Stop.</code></pre>
 <p>把Makefile中的_sysinfo改成_sysinfotest就行了</p>
 <h2 id="the-end">The End</h2>
 <p>总的来说，这次主要考察的是你能不能看的懂，能不能把题意理解了，代码倒不是很难</p>
@@ -247,7 +261,8 @@ sys_sysinfo(void)
 <p><a href="https://zhuanlan.zhihu.com/p/274369780">https://zhuanlan.zhihu.com/p/274369780</a></p>
 <p><a href="https://zhuanlan.zhihu.com/p/346497140">https://zhuanlan.zhihu.com/p/346497140</a></p>
 <p><a href="https://zhuanlan.zhihu.com/p/332243456">https://zhuanlan.zhihu.com/p/332243456</a></p>
-<p>下一站： <a href="https://pdos.csail.mit.edu/6.828/2020/labs/pgtbl.html">Lab pgtbl: Page tables</a></p></div>
+<p>下一站： <a href="https://pdos.csail.mit.edu/6.828/2020/labs/pgtbl.html">Lab pgtbl: Page tables</a></p>
+    </div>
     
             
 
@@ -257,10 +272,7 @@ sys_sysinfo(void)
             
         </div>
         
-
         
-    <script src="/js/prism.js"></script>
-
     
     </div>
 </body>

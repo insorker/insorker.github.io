@@ -9,7 +9,22 @@
     <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
     <link href="/css/yori.css" rel="stylesheet" />
     
-    <link href="/css/prism.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
 
 </head>
 <body>
@@ -26,7 +41,8 @@
             <span> | Posted on 2022-02-21</span>
         </div>
     </div>
-    <div><h1 id="6s081xv6-and-unix-utilities">6.S081「Xv6 and Unix utilities」</h1>
+    <div class="markdown-body">
+        <h1 id="6s081xv6-and-unix-utilities">6.S081「Xv6 and Unix utilities」</h1>
 <ul>
 <li>insorker</li>
 <li>2022/2/21</li>
@@ -311,7 +327,8 @@ main(int argc, char *argv[])
 <h2 id="the-end">The End</h2>
 <p><img alt="" src="https://gitee.com/insorker/image-host/raw/master/blog/6.S081/lab1/result.png" /></p>
 <p>开始？还是结束？</p>
-<p>下一站： <a href="https://pdos.csail.mit.edu/6.828/2020/labs/syscall.html">Lab: system calls</a></p></div>
+<p>下一站： <a href="https://pdos.csail.mit.edu/6.828/2020/labs/syscall.html">Lab: system calls</a></p>
+    </div>
     
             
 
@@ -321,10 +338,7 @@ main(int argc, char *argv[])
             
         </div>
         
-
         
-    <script src="/js/prism.js"></script>
-
     
     </div>
 </body>

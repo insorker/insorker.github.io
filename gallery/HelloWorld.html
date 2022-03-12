@@ -9,7 +9,22 @@
     <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
     <link href="/css/yori.css" rel="stylesheet" />
     
-    <link href="/css/prism.css" rel="stylesheet" />
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
 
 </head>
 <body>
@@ -26,7 +41,8 @@
             <span> | Posted on 2021-12-26</span>
         </div>
     </div>
-    <div><h1 id="hello-world">Hello World</h1>
+    <div class="markdown-body">
+        <h1 id="hello-world">Hello World</h1>
 <h2 id="hello-world_1">Hello World</h2>
 <h3 id="hello-world_2">Hello World</h3>
 <h4 id="hello-world_3">Hello World</h4>
@@ -53,7 +69,8 @@
 <pre class="highlight"><code class="language-python">print("Hello World")</code></pre>
 <blockquote>
 <p>Hello World</p>
-</blockquote></div>
+</blockquote>
+    </div>
     
             
 
@@ -63,10 +80,7 @@
             
         </div>
         
-
         
-    <script src="/js/prism.js"></script>
-
     
     </div>
 </body>
