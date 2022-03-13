@@ -15,20 +15,48 @@
 
 	<!-- Theme used for syntax highlighted code -->
 	<link rel="stylesheet" href="/revealjs/plugin/highlight/github.min.css">
+
+	<style type="text/css">
+		.reveal p {
+			text-align: left;
+		}
+		.reveal ul {
+			display: block;
+		}
+		.reveal ol {
+			display: block;
+		}
+		a {
+			border: none;
+		}
+	</style>
 </head>
 <body>
 	<div class="reveal">
 		<div class="slides">
 			<section data-markdown
-					 data-separator-vertical="\|">
+					 data-separator-vertical="^\|\|\|">
 				<textarea data-template>
 
-# slide1
+<!-- .slide: class="center" -->
+# title1
+> [how to center your h1](https://github.com/hakimel/reveal.js/issues/1262)
+|||
+## subtitle1
 ---
-# slide2
+<!-- .slide: class="center" -->
+# title2
+|||
+## subtitle2
+some sentences
+some sentences
+some sentences
+- li
+- li
 ---
-# Some Code
-|
+<!-- .slide: class="center" -->
+# title3
+|||
 ```c++
 #include <algorithm>
 using namespace std;
@@ -54,6 +82,13 @@ int main() {
 		// - https://revealjs.com/config/
 		Reveal.initialize({
 			hash: true,
+			progress: false,
+			center: false,
+			slideNumber: 'c/t',
+			autoAnimateUnmatched: true,
+			autoAnimateEasing: 'ease-out',
+			autoAnimateDuration: 0.3,
+			transitionSpeed: 'fast',
 
 			// Learn about plugins: https://revealjs.com/plugins/
 			plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
