@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>algorithm</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <link rel="stylesheet" href="/css/github.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            algorithm
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | posted on 2022-03-16</span>
+        </div>
+    </div>
+    <div class="markdown-body">
+        <h1 id="_1">前言</h1>
+<p>因为自己不善于总结而吃了亏。</p>
+<p>所以，前有总结</p>
+<h2 id="_2">基础</h2>
+<h3 id="_3">前缀和</h3>
+<pre class="highlight"><code class="language-c++">int a[N], s[N];
+
+int main() {
+    for (int i = 1; i &lt;= n; i ++ ) s[i] = a[i] + s[i - 1];
+}</code></pre>
+<h3 id="_4">差分</h3>
+<pre class="highlight"><code class="language-c++">int a[N], b[N];
+
+void add(int l, int r, int v) {
+    b[l] += v;
+    b[r + 1] -= v;
+}
+
+int main() {
+    for (int i = 1; i &lt;= n; i ++ ) add(i, i, a[i]);
+}</code></pre>
+<h2 id="_5">数据结构</h2>
+<h3 id="_6">单调栈</h3>
+<pre class="highlight"><code class="language-c++">int stk[N], tt;
+
+// 存距离最近的最大的数
+void add(int v) {
+    while (tt &amp;&amp; stk[tt] &lt;= v) tt -- ;
+    stk[ ++ tt] = v;
+}</code></pre>
+<h3 id="_7">单调队列</h3>
+<h2 id="_8">图论</h2>
+<h3 id="dijkstra">朴素dijkstra</h3>
+<pre class="highlight"><code class="language-c++">int n, m;
+int g[N][N];
+int dist[N];
+bool st[N];
+
+int dijkstra() {
+    memset(dist, 0x3f, sizeof dist);
+    dist[1] = 0;
+
+    for (int i = 0; i &lt; n; i ++ ) {
+        int t = -1;
+        for (int j = 1; j &lt;= n; j ++ )
+            if (!st[j] &amp;&amp; (t == -1 || dist[t] &gt; dist[j]))
+                t = j;
+
+        st[t] = true;
+        for (int j = 1; j &lt;= n; j ++ )
+            dist[j] = min(dist[j], dist[t] + g[t][j]);
+    }
+
+    if (dist[n] == 0x3f3f3f3f) return -1;
+    else return dist[n];
+}
+
+int main() {
+    memset(g, 0x3f, sizeof g);
+
+    while (m -- ) {
+        int a, b, c;
+        scanf("%d%d%d", &amp;a, &amp;b, &amp;c);
+        g[a][b] = min(g[a][b], c);
+    }
+}</code></pre>
+<h3 id="dijkstra_1">堆优化Dijkstra</h3>
+<pre class="highlight"><code class="language-c++">typedef pair&lt;int, int&gt; PII;
+
+int n, m;
+int h[N], e[N], w[N], ne[N], idx;
+int dist[N];
+bool st[N];
+
+void add(int a, int b, int c) {
+    e[idx] = b, w[idx] = c, ne[idx] = h[a], h[a] = idx ++ ;
+}
+
+int dijkstra() {
+    memset(dist, 0x3f, sizeof dist);
+    dist[1] = 0;
+
+    priority_queue&lt;PII&gt; heap;
+    heap.push({ dist[1], 1 });
+
+    while (heap.size()) {
+        auto tt = heap.top(); heap.pop();
+
+        int ver = tt.second;
+        if (st[ver]) continue;
+
+        for (int i = h[ver]; i != -1; i = ne[i]) {
+            int j = e[i], k = w[i];
+            if (dist[j] &gt; dist[ver] + k) {
+                dist[j] = dist[ver] + k;
+                heap.push({ dist[j], j });      // 记得push一下
+            }
+        }
+        st[ver] = true;     // 减少循环次数
+    }
+
+    if (dist[n] == 0x3f3f3f3f) return -1;
+    else return dist[n];
+}
+
+int main() {
+    memset(h, -1, sizeof h);
+}</code></pre>
+<h3 id="bellman-ford">bellman-ford</h3>
+<pre class="highlight"><code class="language-c++">int n, m, k;
+int dist[N], bak[N];    // N个点
+struct Edge {
+    int a, b, w;
+} edges[M];             // M条边
+
+int bellman_ford() {
+    memset(dist, 0x3f, sizeof dist);
+    dist[1] = 0;
+
+    for (int i = 0; i &lt; k; i ++ ) {         // 循环k次，走k步
+        memcpy(bak, dist, sizeof dist);     // 备份一下
+        for (int j = 0; j &lt; m; j ++ ) {
+            int &amp;e = edges[j];
+            dist[e.b] = min(dist[e.b], bak[e.a] + e.w);
+        }
+    }
+
+    if (dist[n] &gt; 0x3f3f3f3f / 2) return "impossible";  // 因为最后一条边是肯定会被更新的，但不一定能走到
+    else return dist[n];
+}</code></pre>
+<h3 id="spfa">spfa</h3>
+<pre class="highlight"><code class="language-c++">int n, m;
+int h[N], e[N], w[N], ne[N], idx;
+int dist[N];
+bool st[N];
+
+void add(int a, int b, int c) {
+    e[idx] = b, w[idx] = c, ne[idx] = h[a], h[a] = idx ++ ;
+}
+
+int spfa() {
+    memset(dist, 0x3f, sizeof dist);
+    dist[1] = 0;
+
+    queue&lt;int&gt; q;
+    q.push(1);
+    st[1] = true;       // st表示的是元素是否在队列中
+
+    while (q.size()) {
+        auto tt = q.front(); q.pop();
+        st[tt] = false;
+
+        for (int i = h[tt]; i != -1; i = ne[i]) {
+            int j = e[i], k = w[i];
+            if (dist[j] &gt; dist[tt] + k) {
+                dist[j] = dist[tt] + k;
+                if (!st[j]) {
+                    q.push(j);
+                    st[j] = true;
+                }
+            }
+        }
+    }
+
+    if (dist[n] == 0x3f3f3f3f) return "impossible"; // 不能return-1，因为有可能dist[n] == -1
+    else return dist[n];
+}
+
+int main() {
+    memset(h, -1, sizeof h);
+}</code></pre>
+<hr />
+    </div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    
+    </div>
+</body>
+</html>
