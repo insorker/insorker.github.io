@@ -47,13 +47,26 @@
 <p>因为自己不善于总结而吃了亏。</p>
 <p>所以，前有总结</p>
 <h2 id="_2">基础</h2>
-<h3 id="_3">前缀和</h3>
+<h3 id="_3">链表</h3>
+<pre class="highlight"><code class="language-c++">int h, e[N], ne[N], idx;
+
+void init() { h = -1; idx = 0; }
+void add_to_head(int v) {
+    e[idx] = v, ne[idx] = h, h = idx ++ ;
+}
+void add(int k, int v) {
+    e[idx] = v, ne[idx] = ne[k], ne[k] = idx ++ ;
+}
+void remove(int k) {
+    ne[k] = ne[ne[k]];
+}</code></pre>
+<h3 id="_4">前缀和</h3>
 <pre class="highlight"><code class="language-c++">int a[N], s[N];
 
 int main() {
     for (int i = 1; i &lt;= n; i ++ ) s[i] = a[i] + s[i - 1];
 }</code></pre>
-<h3 id="_4">差分</h3>
+<h3 id="_5">差分</h3>
 <pre class="highlight"><code class="language-c++">int a[N], b[N];
 
 void add(int l, int r, int v) {
@@ -64,8 +77,18 @@ void add(int l, int r, int v) {
 int main() {
     for (int i = 1; i &lt;= n; i ++ ) add(i, i, a[i]);
 }</code></pre>
-<h2 id="_5">数据结构</h2>
-<h3 id="_6">单调栈</h3>
+<h3 id="_6">并查集</h3>
+<pre class="highlight"><code class="language-c++">int p[N];
+
+void init() {
+    for (int i = 1; i &lt;= n; i ++ ) p[i] = i;
+}
+int find(int x) {
+    if (p[x] != x)
+        p[x] = find(p[x]);
+    return p[x];
+}</code></pre>
+<h3 id="_7">单调栈</h3>
 <pre class="highlight"><code class="language-c++">int stk[N], tt;
 
 // 存距离最近的最大的数
@@ -73,9 +96,39 @@ void add(int v) {
     while (tt &amp;&amp; stk[tt] &lt;= v) tt -- ;
     stk[ ++ tt] = v;
 }</code></pre>
-<h3 id="_7">单调队列</h3>
-<h2 id="_8">图论</h2>
+<h3 id="_8">单调队列</h3>
+<h2 id="_9">字符串</h2>
+<h3 id="trie">Trie树</h3>
+<pre class="highlight"><code class="language-c++">// 这里以26个字母的字符串建树为例子，N是字符串最长长度
+int son[N][26], cnt[N], idx;
+char str[N];
+
+// 在trie树中插入一条字符串
+void insert(char *str) {
+    int p = 0;
+    for (int i = 0; str[i]; i ++ ) {
+        int u = str[i] - 'a';
+        if (!son[p][u]) son[p][u] = ++ idx; // 下一个字母的下标
+                                            // 因为需要用0判断son是否为空，所以是 ++idx
+        p = son[p][u];
+    }
+    cnt[p] ++ ; // 表示以下标p结尾的字符串个数加1
+}
+
+int query(char *str) {
+    int p = 0;
+    for (int i = 0; str[i]; i ++ ) {
+        int u = str[i] - 'a';
+        if (!son[p][u]) return 0;
+        p = son[p][u];
+    }
+    return cnt[p]; // 返回出现了几次
+}</code></pre>
+<h2 id="_10">图论</h2>
 <h3 id="dijkstra">朴素dijkstra</h3>
+<blockquote>
+<p>O(n^2)，处理稠密图</p>
+</blockquote>
 <pre class="highlight"><code class="language-c++">int n, m;
 int g[N][N];
 int dist[N];
@@ -110,6 +163,9 @@ int main() {
     }
 }</code></pre>
 <h3 id="dijkstra_1">堆优化Dijkstra</h3>
+<blockquote>
+<p>复杂度忘了，反正稀疏图</p>
+</blockquote>
 <pre class="highlight"><code class="language-c++">typedef pair&lt;int, int&gt; PII;
 
 int n, m;
@@ -214,6 +270,104 @@ int spfa() {
 int main() {
     memset(h, -1, sizeof h);
 }</code></pre>
+<h3 id="floyd">Floyd</h3>
+<pre class="highlight"><code class="language-c++">const int INF = 1e9;
+int n, m;
+int dist[N][N];
+
+int floyd() {
+    for (int k = 1; k &lt;= n; k ++ )
+        for (int i = 1; i &lt;= n; i ++ )
+            for (int j = 1; j &lt;= n; j ++ )
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j]);
+}
+
+int main() {
+    for (int i = 1; i &lt;= n; i ++ )
+        for (int j = 1; j &lt;= n; j ++ )
+            if (i == j) dist[i][j] = 0;
+            else dist[i][j] = INF;
+
+    for (int i = 0; i &lt; m; i ++ ) {
+        int a, b, c;
+        scanf("%d%d%d", &amp;a, &amp;b, &amp;c);
+        dist[a][b] = min(dist[a][b], c);
+    }
+
+    // 查询x，y
+    if (dist[x][y] &gt; INF / 2) false;    // 所有边都会更新
+    else dist[x][y];
+}</code></pre>
+<h3 id="_11">最小生成树</h3>
+<h4 id="prim">Prim</h4>
+<pre class="highlight"><code class="language-c++">const int INF = 0x3f3f3f3f;
+int n, m;
+int g[N][N];
+int dist[N];
+bool st[N];
+
+int prim() {
+    memset(dist, 0x3f, sizeof dist);
+
+    int res = 0;
+    for (int i = 0; i &lt; n; i ++ ) {
+        int t = -1;
+        for (int j = 1; j &lt;= n; j ++ )
+            if (!st[j] &amp;&amp; (t == -1 || dist[t] &gt; dist[j]))
+                t = j;
+
+        if (i &amp;&amp; dist[t] == INF) return INF;
+        if (i) res += dist[t];
+        st[t] = true;
+
+        for (int j = 1; j &lt;= n; j ++ )
+            if (!st[j]) dist[j] = min(dist[j], g[t][j]);
+    }
+
+    return res;
+}
+// 因为最小生成树是无向图，注意一下初始化
+g[a][b] = g[b][a] = min(g[a][b], c);</code></pre>
+<h4 id="kruskal">Kruskal</h4>
+<pre class="highlight"><code class="language-c++">int n, m;
+int p[N]; // 并查集
+struct Edge {
+    int a, b, w;
+    bool operator&lt;(const struct Edge &amp;e) const {
+        return w &lt; e.w;
+    }
+} edges[N];
+
+int find(int a) {
+    if (p[a] != a) p[a] = find(p[a]);
+    return p[a];
+}
+
+int main() {
+    for (int i = 0; i &lt; m; i ++ ) {
+        int a, b, w;
+        scanf("%d%d%d", &amp;a, &amp;b, &amp;w);
+        edges[i] = { a, b, w };
+    }
+    sort(edges, edges + m);
+
+    for (int i = 1; i &lt;= n; i ++ ) p[i] = i;
+
+    int res = 0, cnt = 0;   // 最小生成树边权重和，边数
+    for (int i = 0; i &lt; m; i ++ ) {
+        int a = edges[i].a, b = edges[i].b, w = edges[i].w;
+        a = find(a), b = find(b);
+        if (a != b) {
+            res += w;
+            p[a] = b;
+            cnt ++ ;
+        }
+    }
+    if (cnt &lt; n - 1) false; // 因为n个点有n-1条边，如果达不到，说明不是连通图
+    else res;
+}</code></pre>
+<h2 id="_12">动态规划</h2>
+<h3 id="_13"></h3>
 <hr />
     </div>
     
