@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第 286 场周赛</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <link rel="stylesheet" href="/css/github.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            第 286 场周赛
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | posted on 2022-03-27</span>
+        </div>
+    </div>
+    <div class="markdown-body">
+        <h1 id="286">第 286 场周赛</h1>
+<h2 id="t1-5268">T1: \5268. 找出两数组的不同</h2>
+<p>懒得想太多了，这个应该算思路最简单了吧</p>
+<pre class="highlight"><code class="language-c++">class Solution {
+    static const int N = 2010;
+    int f[2][N];
+public:
+    vector&lt;vector&lt;int&gt;&gt; findDifference(vector&lt;int&gt;&amp; nums1, vector&lt;int&gt;&amp; nums2) {
+        vector&lt;vector&lt;int&gt;&gt; res(2);
+        int n = nums1.size(), m = nums2.size();
+
+        for (int i = 0; i &lt; n; i ++ ) {
+            f[0][nums1[i] + 1000] = 1;
+        }
+        for (int i = 0; i &lt; m; i ++ ) {
+            f[1][nums2[i] + 1000] = 1;
+        }
+        for (int i = 0; i &lt; N; i ++ ) {
+            if (f[0][i] &amp;&amp; !f[1][i]) res[0].push_back(i - 1000);
+            if (!f[0][i] &amp;&amp; f[1][i]) res[1].push_back(i - 1000);
+        }
+
+        return res;
+    }
+};</code></pre>
+<h2 id="t2-5236">T2: \5236. 美化数组的最少删除数</h2>
+<p>一看就感觉是dp的题目，但确实没什么显而易见的思路，感觉是线性dp</p>
+<p>f[i]表示以nums中下标i结尾的最长美丽数组，f[i]中存的是0~i-1中删了多少个数</p>
+<pre class="highlight"><code class="language-c++">class Solution {
+    static const int N = 1e5 + 10;
+    int f[N];
+public:
+    int minDeletion(vector&lt;int&gt;&amp; nums) {
+        int n = nums.size();
+        memset(f, 0x3f, sizeof f);
+
+        f[0] = 0;
+        for (int i = 1; i &lt; n; i ++ ) {
+            int j = i - 1;
+            int ii = j - f[j] + 1;
+            if (ii &amp; 1 &amp;&amp; nums[i] == nums[j]) {
+                f[i] = i - j - 1 + f[j] + 1;
+            }
+            else {
+                f[i] = min(f[i], i - j - 1 + f[j]);
+            }
+        }
+
+        if ((n - f[n - 1]) % 2) f[n - 1] ++ ;
+
+        return f[n - 1];
+    }
+};</code></pre>
+<h2 id="t3-5253">T3: \5253. 找到指定长度的回文数</h2>
+<p>比上一题还简单一点。。。主要思路是，比如回文数101，那么他其实等价于10做镜像，那么第90个回文数就是10 + 90 - 1 = 99作镜像，即999</p>
+<pre class="highlight"><code class="language-c++">class Solution {
+    typedef long long LL;
+
+    LL get(LL num, int sz) {
+        LL res = 0, tmp = num;
+        if (sz &amp; 1) num /= 10;
+        for (int i = 0; num; i ++ ) {
+            res *= 10;
+            res += num % 10;
+            num /= 10;
+        }
+
+        return res + tmp * pow(10, sz / 2);
+    }
+
+public:
+    vector&lt;long long&gt; kthPalindrome(vector&lt;int&gt;&amp; queries, int intLength) {
+        vector&lt;LL&gt; res;
+        LL base = pow(10, (intLength - 1) / 2);
+        LL limit = 0;
+        for (int i = 0; i &lt; intLength; i ++ ) {
+            limit *= 10;
+            limit += 9;
+        }
+        for (int i = 0; i &lt; queries.size(); i ++ ) {
+            LL tmp = get(base + queries[i] - 1, intLength);
+            if (tmp &gt; limit)
+                res.push_back(-1);
+            else
+                res.push_back(tmp);
+        }
+
+        return res;
+    }
+};</code></pre>
+<h2 id="t4-5269-k">T4: \5269. 从栈中取出 K 个硬币的最大面值和</h2>
+<p>怎么又是dp问题？明显是分组背包问题，把每个栈做一遍处理就行了，我担心的是时间复杂度是O(n^3)怕TLE，但还好没</p>
+<pre class="highlight"><code class="language-c++">class Solution {
+    typedef long long LL;
+
+    static const int N = 2010;
+    LL f[N];
+    int v[N][N], w[N][N];
+public:
+    int maxValueOfCoins(vector&lt;vector&lt;int&gt;&gt;&amp; piles, int k) {
+        int n = piles.size();
+
+        for (int i = 1; i &lt;= n; i ++ )
+            for (int j = 1; j &lt;= piles[i - 1].size(); j ++ ) {
+                v[i][j] = v[i][j - 1] + 1;
+                w[i][j] = w[i][j - 1] + piles[i - 1][j - 1];
+            }
+
+        for (int i = 1; i &lt;= n; i ++ )
+            for (int j = k; j &gt;= 0; j -- )
+                for (int u = 1; u &lt;= piles[i - 1].size(); u ++ )
+                    if (v[i][u] &lt;= j)
+                        f[j] = max(f[j], f[j - v[i][u]] + w[i][u]);
+
+        return f[k];
+    }
+};</code></pre>
+    </div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    
+    </div>
+</body>
+</html>
