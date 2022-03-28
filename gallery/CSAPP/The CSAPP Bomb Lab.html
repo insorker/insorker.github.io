@@ -94,22 +94,22 @@
 <ol>
 <li>
 <p>在<code>input = read_line();</code>前敲下断点<br />
-<img alt="" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/bomblab/1.png" /></p>
+<img alt="" src="https://insorker-bucket.oss-cn-hangzhou.aliyuncs.com/img/1.png" /></p>
 </li>
 <li>
 <p>执行后发现值被存入了寄存器 %rdi<br />
-<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/bomblab/2.png" /></p>
+<img alt="" src="https://insorker-bucket.oss-cn-hangzhou.aliyuncs.com/img/2.png" /></p>
 </li>
 <li>
 <p>然后单步进入 phase_1 发现 esi 被存值 'B'，而且调用了函数 strings_not_equal，可想而知，需要输入的字母是<strong>B</strong><br />
-<img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/bomblab/3.png" /></p>
+<img alt="" src="https://insorker-bucket.oss-cn-hangzhou.aliyuncs.com/img/3.png" /></p>
 </li>
 <li>
 <p>验证，寄了</p>
 <p>当时做到这里我是万分激动啊，觉得简单又有成就感，但是尝试输入'B'结果失败了，让我大吃一惊。回头查看程序，一步步调试 strings_not_equal，发现果然是我想当然了，题目从来没明说过输入只是一个字符，我调试了里面的 string_length，发现正确答案竟然有 52 个字符，但不可否认的是，我思路是对的，查看的方式错了，于是有了接下来的</p>
 </li>
 <li>
-<p><img alt="在这里插入图片描述" src="https://gitee.com/insorker/image-host/raw/master/blog/CSAPP/bomblab/4.png" /></p>
+<p><img alt="" src="https://insorker-bucket.oss-cn-hangzhou.aliyuncs.com/img/4.png" /></p>
 </li>
 <li>
 <p>这下OK了</p>
