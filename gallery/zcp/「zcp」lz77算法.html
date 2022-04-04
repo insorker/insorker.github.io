@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>lz77算法</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <link rel="stylesheet" href="/css/github.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            lz77算法
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | posted on 2022-04-04</span>
+        </div>
+    </div>
+    <div class="markdown-body">
+        <h1 id="lz77">LZ77算法</h1>
+<h2 id="_1">简介</h2>
+<p><strong>LZ77</strong>与<strong>LZ78</strong>是<a href="https://zh.wikipedia.org/w/index.php?title=Abraham_Lempel&amp;action=edit&amp;redlink=1">Abraham Lempel</a>与<a href="https://zh.wikipedia.org/w/index.php?title=Jacob_Ziv&amp;action=edit&amp;redlink=1">Jacob Ziv</a>在1977年以及1978年发表的论文中的两个<a href="https://zh.wikipedia.org/wiki/无损数据压缩">无损数据压缩</a><a href="https://zh.wikipedia.org/wiki/算法">算法</a>。这两个算法是大多数LZ算法变体如<a href="https://zh.wikipedia.org/wiki/LZW">LZW</a>、<a href="https://zh.wikipedia.org/wiki/LZSS">LZSS</a>以及其它一些压缩算法的基础。与最小冗余编码器或者行程长度编码器不同，这两个都是基于字典的编码器。LZ77是“滑动窗”压缩算法，这个算法后来被证明等同于LZ78中首次出现的显式字典编码技术。</p>
+<p><a href="https://en.wikipedia.org/wiki/LZ77_and_LZ78">这不点我？</a></p>
+<h2 id="_2">例如</h2>
+<h3 id="_3">压缩</h3>
+<p>有一串字符如下，我们给出字符的同时做以下定义与假设</p>
+<ul>
+<li>定义</li>
+<li>所有空格不算字符，仅为了显示清楚</li>
+<li>符号"|"分割字符串为两部分，左侧为滑动窗口（简称窗口），右侧为匹配缓冲区（简称缓存）</li>
+<li>匹配结果为单个字符，则不做匹配</li>
+<li>假设</li>
+<li>窗口中的字符已经经过匹配</li>
+<li>缓存中的字符即将被匹配</li>
+<li>我们有一种匹配算法可以匹配缓存的所有前缀与窗口字符串的幂集中能匹配的最长前缀</li>
+</ul>
+<pre class="highlight"><code>abccdab | bcadab</code></pre>
+<p>分析一下这个字符串，我们可以发现缓存中的"bc"，"dab"在窗口中已经出现过，那么就可以用相对位置关系取代直接存储。</p>
+<p>比如我们设计几个产生式，那么可以得到</p>
+<blockquote>
+<p>s表示在缓存中匹配的下一个字符串</p>
+<p>p表示相对于"|"的距离，l表示匹配的长度，c表示匹配结束后的下一个字符</p>
+</blockquote>
+<p>s → (p, l) | c</p>
+<p>按照这个产生式，我们分析上面的字符串的到</p>
+<p><strong>step1</strong></p>
+<p>通过匹配算法发现"bc"存在匹配，得到如下结果</p>
+<pre class="highlight"><code>before: abccdab | bcadab
+        7654321
+after:  abccdabbc | adab
+(6, 2)</code></pre>
+<p><strong>step2</strong></p>
+<p>通过匹配算法发现不存在匹配</p>
+<pre class="highlight"><code>before: abccdabbc | adab
+after:  abccdabbca | dab
+(6, 2) a</code></pre>
+<p><strong>step3</strong></p>
+<p>通过匹配算法发现"dab"存在匹配，得到如下结果</p>
+<pre class="highlight"><code>before:  abccdabbca | dab
+        10987654321
+after:   abccdabbcadab
+(6, 2) a (6, 3)</code></pre>
+<p>ok，结束了，最终结果就是"...(6, 2) a (6, 3)"</p>
+<h3 id="_4">解压</h3>
+<p>解压更简单，倒过来看，首先还是假设窗口已经被解压完成。</p>
+<p><strong>step1</strong></p>
+<pre class="highlight"><code>before: abccdab |
+        7654321
+(6, 2)
+after:  abccdabbc |</code></pre>
+<p>看到(6, 2)，我们找到"|"前的第六个字符，取两位得到子串，然后添加到末尾就ok了</p>
+<p><strong>step2</strong></p>
+<pre class="highlight"><code>before: abccdabbc |
+a
+after:  abccdabbca |</code></pre>
+<p><strong>step3</strong></p>
+<pre class="highlight"><code>before:  abccdabbca |
+        10987654321
+(6, 3)
+after:   abccdabbcadab |</code></pre>
+<h3 id="_5">对于一般情况</h3>
+<p>可以用数学归纳法证明算法的可行性，我们已经简单举例证明了n-1→n</p>
+<h2 id="_6">原理</h2>
+<p>用数学表达式描述有点复杂，加上博客目前不支持math的渲染，就不多bb了，看看别的博客就行。</p>
+<p>这里推荐<a href="https://www.cnblogs.com/en-heng/p/4992916.html">一位</a>，真的厉害，链接也会放到参考资料里的。</p>
+<h2 id="_7">伪代码</h2>
+<p>用(p, l, c)表示缓存中字符串的<strong>最长匹配</strong>结果，其中</p>
+<ul>
+<li>
+<p>cursor代指符号"|"</p>
+</li>
+<li>
+<p>p表示最长匹配时，窗口中字符开始时的位置（相对于cursor位置）</p>
+</li>
+<li>l为最长匹配字符串的长度，</li>
+<li>c指缓存中最长匹配结束时的下一字符</li>
+</ul>
+<p>压缩的过程，就是重复输出(p, l, c)，并将cursor移动l+1的距离，伪代码如下：</p>
+<pre class="highlight"><code>[Main]
+Repeat:
+    (p,l,c) &lt;-- Match
+    Output (p,l,c)
+    cursor move l+1
+Until to the end of string
+
+[Match] (INPUT string, cursor OUTPUT (p,l,c))
+sliding window range   &lt;-- [0 OR cursor - sliding window size, end of string OR cursor + lookahead buffer size - 1]
+lookahead buffer range &lt;-- [cursor, end of string OR cursor + lookahead buffer size - 1]
+do match</code></pre>
+<p>压缩示例如图所示：</p>
+<p><img alt="" src="https://insorker-bucket.oss-cn-hangzhou.aliyuncs.com/img/blog/399159-20151124220144781-1512450659.png" /></p>
+<h2 id="_8">解压缩</h2>
+<p>这里先解释一下什么叫循环编码</p>
+<blockquote>
+<p>在窗口中匹配是说第一个字符一定在窗口中，但后面的字符不一定在窗口中，可以溢出到缓存中，如</p>
+<pre class="highlight"><code>abc | abcab
+321</code></pre>
+<p>上述字符串的(p, l)可以写成(3, 5)，其中l的值为5，超过的窗口的长度3</p>
+<p>这样就需要我们在解压缩的过程中，循环解压缩（谜语人是吧，听君一席话，如听一席话</p>
+</blockquote>
+<p>ok，接下来正式开始解压</p>
+<p>为了能保证正确解码，解压缩时的窗口长度与压缩时一样。在解压缩，遇到(p,l,c)大致分为三类情况：</p>
+<ul>
+<li>p==0且l==0，即初始情况，直接解码c；</li>
+<li>p&gt;=l，解码为[p, p + l - 1] + c</li>
+<li>p&lt;l，即出现循环编码，需要从左至右循环拼接，伪代码如下：</li>
+</ul>
+<pre class="highlight"><code class="language-python">len = l
+while len:
+    if len &lt; p:
+        out[cursor: cursor + l] = out[cursor - p: cursor - p + l]
+        break
+
+    out[cursor: cursor + p] = out[cursor - p: cursor]
+    cursor += p
+    len -= p</code></pre>
+<p>比如，abcd，编码为(2,9,e)，则解压缩为output=abcd<strong>cdcdcdcdc</strong>e。</p>
+<h2 id="_9">代码</h2>
+<p><a href="https://github.com/insorker/zcp/blob/master/LZ77/released/zcp.cpp">C++实现</a></p>
+<h2 id="_10">参考资料</h2>
+<p><a href="https://www.cnblogs.com/en-heng/p/4992916.html">原理介绍</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/114564074">优化match</a></p>
+<p><a href="https://en.wikipedia.org/wiki/LZ77_and_LZ78">wiki</a></p>
+    </div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    
+    </div>
+</body>
+</html>

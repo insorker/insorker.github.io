@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>「zcp」综述</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <link rel="stylesheet" href="/css/github.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            「zcp」综述
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | posted on 2022-04-04</span>
+        </div>
+    </div>
+    <div class="markdown-body">
+        <h1 id="_1">项目背景</h1>
+<p>第六届集创赛 —— 产业链创新赛道 —— 华大九天杯</p>
+<h1 id="_2">问题复述</h1>
+<p><a href="http://univ.ciciec.com/nd.jsp?id=450#_jcp=1">http://univ.ciciec.com/nd.jsp?id=450#_jcp=1</a></p>
+<h1 id="_3">分析</h1>
+<p>题目看似是波形压缩，实际上和波形没什么关系，本质还是压缩算法。压缩的内容很简单，只有<em>10xz</em>这四种信号，且要求无损压缩。</p>
+<h2 id="1-">方式1 - 暴力</h2>
+<h3 id="_4">思路</h3>
+<p>那么从最简单的角度来压缩，如果原本的存储方式是按char（1byte）类型存储（符合一般文本文件），那么四种情况其实可以压缩为2bit，即2^2=4种情况就可以囊括四种信号，然后在解压缩的时候对着表翻译就行了。</p>
+<h3 id="_5">分析</h3>
+<p>无最好最坏情况，平均就是1/4的压缩率。</p>
+<p>虽然没有最好最坏情况，但如果仔细想想，这种算法的最好情况其实对应于随机信号，最坏情况对应于周期信号，因为周期信号的周期信息被这种算法抛弃了。</p>
+<h2 id="2-lz77">方式2 - LZ77</h2>
+<h3 id="_6">思路</h3>
+<blockquote>
+<p>关于这个算法的详细内容会另出一篇文章介绍，这里仅简单描述。</p>
+</blockquote>
+<p>简单来说，lz77是匹配重复字符串，然后对重复字符串仅记录一次，从而达到压缩的目的。</p>
+<h3 id="_7">分析</h3>
+<p>最好情况就是对于周期信号或者重复率高的信号压缩率高，最坏情况就是随机信号。</p>
+<p>一般情况因为是波形信号，多半是有规律的，也就是90%情况下都有不错的压缩率。</p>
+<p>但是缺点也很多，比如压缩很慢，主要慢在字符串匹配的过程中。对于匹配不到的信号甚至需要更多的空间，比如考虑只能匹配一个字符，那么原来只用一个字符（1byte）就能存下的内容，现在需要位置长度字符三个信息（2+1+1=4byte），这就纯纯的恶心人了。。。</p>
+<h2 id="3-12">方式3 - 方式1+方式2</h2>
+<h3 id="_8">思路</h3>
+<p>很容易想到的是先用方式1压缩一遍，然后用方式2压缩。</p>
+<h3 id="_9">分析</h3>
+<p>保证了最坏情况也有25%的压缩率，而且不会破坏原信号的周期性。但问题是方式2的匹配难度加大了，原来只用匹配10xz，现在需要匹配所有1byte内的可能（0-255），变相的降低了匹配率，从而降低压缩率，很可能出现压缩率大于25%的情况（面对随机信号）。当然这种方式算是弥补了上述两个方式各自的缺点，总体来说应该是提高了压缩了（但愿。</p>
+    </div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    
+    </div>
+</body>
+</html>
