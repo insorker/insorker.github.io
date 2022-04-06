@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>「zcp」match函数的实现</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <link rel="stylesheet" href="/css/github.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            「zcp」match函数的实现
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | posted on 2022-04-05</span>
+        </div>
+    </div>
+    <div class="markdown-body">
+        <h1 id="match">match函数的实现</h1>
+<h2 id="_1">前言</h2>
+<p>之前我们提到了lz77算法的实现，可以发现lz77算法的解压速度是非常快的，基本做到O(N)，但是压缩速度就不那么尽如人意。这里对压缩算法中的字符串匹配做一定的分析。</p>
+<h2 id="_2">匹配算法</h2>
+<p>设窗口大小为n，缓存大小为m</p>
+<p>一般我们取n = 32k，m = 256</p>
+<h3 id="brute-force">Brute Force</h3>
+<p>如果用暴力的方法解压，方法很容易想。</p>
+<ol>
+<li>从长到短遍历缓存中的前缀 O(m)</li>
+<li>遍历一遍窗口的每个字符作为字符串首字母 O(n)</li>
+<li>判断窗口字符串是否等于缓存字符串 O(m)</li>
+</ol>
+<p>大概分析一下时间复杂度，是O(m^2 * n)，即2^31 = 2 * 10^9，很恐怖，对吧</p>
+<p>当然这是大O，实际上要小很多，因为匹配的字符串长度也是在变化的，但仍然很庞大</p>
+<h3 id="kmp">KMP</h3>
+<p>看到字符串匹配很容易想到KMP</p>
+<ol>
+<li>从长到短遍历缓存中的前缀 O(m)，同时算一下next数组O(m)</li>
+<li>直接kmp窗口 O(n)</li>
+</ol>
+<p>大概就是O(m * n)，即2^24 = 16 * 10^6，一下子小了很多了</p>
+<h3 id="_3"></h3>
+    </div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    
+    </div>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>年轻人的第一个model-checker.py</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <link rel="stylesheet" href="/css/github.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            年轻人的第一个model-checker.py
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | posted on 2022-04-06</span>
+        </div>
+    </div>
+    <div class="markdown-body">
+        <h1 id="model-checkerpy">年轻人的第一个model-checker.py</h1>
+<p><a href="http://jyywiki.cn/OS/2022/slides/4.slides#/2/2">链接</a></p>
+<h2 id="_1">分析</h2>
+<h3 id="main">main</h3>
+<pre class="highlight"><code class="language-python"># 获取源码文本
+src, vars = Path(sys.argv[1]).read_text(), {}
+# 运行，vars存储零时变量，即如{'Mutex': &lt;class '__main__.Mutex'&gt;}
+exec(src, globals(), vars)
+# 因为vars只存了类的定义，所以type也是属于class 'type'，所以Class就是sys.argv[1]里的第一个类
+Class = [C for C in vars.values() if type(C) == type].pop()
+# 给Class添加一个source属性为源码
+setattr(Class, 'source', src)
+# check_bfs
+check_bfs(Class)</code></pre>
+<p>这个main函数还是很简单的，其实什么都没做</p>
+<h3 id="thread-marker">thread &amp;&amp; marker</h3>
+<p>补充一个小知识</p>
+<pre class="highlight"><code class="language-python">x = 1
+
+def foo():
+    # 这里会报错，因为python会把x视为局部变量
+    x = x + 1</code></pre>
+<p>因为内部函数有引用外部函数的同名变量或者全局变量，并且对这个变量有修改的时候，此时 Python 会认为它是一个局部变量，而函数中并没有 x 的定义和赋值，所以报错。</p>
+<p>需要修改成这样</p>
+<pre class="highlight"><code class="language-python">x = 1
+
+def foo():
+    global x
+    x = x + 1</code></pre>
+<p>ok，回归正题，这里就是个装饰器，存函数名和函数内容</p>
+<h2 id="em">em...</h2>
+<p>读到中间发现需要AST的知识，先润了</p>
+    </div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    
+    </div>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python装饰器</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <link rel="stylesheet" href="/css/github.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            Python装饰器
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | posted on 2022-04-06</span>
+        </div>
+    </div>
+    <div class="markdown-body">
+        <h1 id="python">Python装饰器</h1>
+<p>主要是老是忘掉，然后又得上网查，太麻烦了</p>
+<h2 id="python_1">Python中的函数</h2>
+<p>python的函数是对象，函数的赋值不是引用，也就是</p>
+<pre class="highlight"><code class="language-python">def foo(name="insorker"):
+    return "hi, " + name
+
+print(foo('1'))
+foo2 = foo
+del foo
+print(foo2('2'))
+# 输出
+hi, 1
+hi, 2</code></pre>
+<p>Python函数嵌套</p>
+<pre class="highlight"><code class="language-python">def foo(name="insorker"):
+    def greet():
+        return "hi, " + name
+
+    def goodbye():
+        return "bye, " + name
+
+    print(greet())
+    print(goodbye())
+
+foo()</code></pre>
+<p>Python函数可以作为参数和返回值</p>
+<h2 id="_1">装饰器</h2>
+<p>用刚才的知识就可以写出这样一个装饰器</p>
+<pre class="highlight"><code class="language-python">def decorator(func):
+    def wrapFunc():
+        print('hi, ', end='')
+        func()
+
+    return wrapFunc
+
+def foo(name="insorker"):
+    print(name)
+
+foo()
+decorator(foo)()</code></pre>
+<p>用python的语法@符号来写就是</p>
+<pre class="highlight"><code class="language-python">def decorator(func):
+    def wrapFunc():
+        print('hi, ', end='')
+        func()
+
+    return wrapFunc
+
+@decorator
+def foo(name="insorker"):
+    print(name)
+
+foo()</code></pre>
+<p>但这样有个问题，运行<code>print(foo.__name__)</code>会变成wrapFunc，注释文档也会变，于是就有了这种方法</p>
+<pre class="highlight"><code class="language-python">from functools import wraps
+
+def decorator(func):
+    @wraps(func)
+    def wrapFunc():
+        print('hi, ', end='')
+        func()
+
+    return wrapFunc
+
+@decorator
+def foo(name="insorker"):
+    print(name)
+
+print(foo.__name__)</code></pre>
+<p><strong>注意：</strong> <strong>@wraps</strong>接受一个函数来进行装饰，并加入了复制函数名称、注释文档、参数列表等等的功能。这可以让我们在装饰器里面访问在装饰之前的函数的属性。</p>
+<h2 id="_2">应用</h2>
+<pre class="highlight"><code class="language-python">from functools import wraps
+
+def LOG(func):
+    @wraps(func)
+    def log(*args, **kwargs):
+        print(func.__name__ + " was called")
+        return func(*args, **kwargs)
+    return log
+
+@LOG
+def add(a: int, b: int):
+    return a + b
+
+add(1, 2)</code></pre>
+<h2 id="_3">更多</h2>
+<p><a href="https://eastlakeside.gitbook.io/interpy-zh/decorators">https://eastlakeside.gitbook.io/interpy-zh/decorators</a></p>
+    </div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    
+    </div>
+</body>
+</html>
