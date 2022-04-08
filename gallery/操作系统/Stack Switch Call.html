@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stack Switch Call</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <link rel="stylesheet" href="/css/github.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            Stack Switch Call
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | posted on 2022-04-08</span>
+        </div>
+    </div>
+    <div class="markdown-body">
+        <h1 id="stack-switch-call">Stack Switch Call</h1>
+<h2 id="gcc-inline-assembly-howto">GCC-Inline-Assembly-HOWTO</h2>
+<p><a href="http://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html">http://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html</a></p>
+<h3 id="_1">简单模式</h3>
+<pre class="highlight"><code class="language-c">asm("assembly code");</code></pre>
+<p>双引号里面的内容就是汇编文本，该换行的地方还是要换行，比如</p>
+<pre class="highlight"><code class="language-c"> __asm__ ("movl %eax, %ebx\n\t"
+          "movl $56, %esi\n\t"
+          "movl %ecx, $label(%edx,%ebx,$4)\n\t"
+          "movb %ah, (%ebx)");</code></pre>
+<h4 id="_2">扩展</h4>
+<pre class="highlight"><code class="language-c">asm ( assembler template 
+           : output operands                  /* optional */
+           : input operands                   /* optional */
+           : list of clobbered registers      /* optional */
+           );</code></pre>
+<p>先解释一下<a href="https://stackoverflow.com/questions/41899881/what-is-a-clobber">clobbered registers</a>是什么意思：</p>
+<p>我的理解是asm中即将使用clobbered registers，所以编译器不应该在asm语句前用clobbered registers保存东西。换句话说，我作为程序员告诉编译器clobbered registers我要用了，你就别用它存东西了，我用过后里面的内容就变了。</p>
+<p>然后对于代码的解释，官方给出原文很容易理解</p>
+<pre class="highlight"><code class="language-c">int a=10, b;
+asm ("movl %1, %%eax; 
+     movl %%eax, %0;"
+     :"=r"(b)        /* output */
+     :"r"(a)         /* input */
+     :"%eax"         /* clobbered register */
+    ); </code></pre>
+<p>Here what we did is we made the value of ’b’ equal to that of ’a’ using assembly instructions. Some points of interest are:</p>
+<ul>
+<li>"b" is the output operand, referred to by %0 and "a" is the input operand, referred to by %1.</li>
+<li>"r" is a constraint on the operands. We’ll see constraints in detail later. For the time being, "r" says to GCC to use <strong>any register</strong>（这里r代表register，说的是any register可以用来存b） for storing the operands. output operand constraint should have a constraint modifier "=". And this modifier says that it is the output operand and is write-only.</li>
+<li>There are two %’s prefixed to the register name. This helps GCC to distinguish between the operands and registers. operands have a single % as prefix.</li>
+<li>The clobbered register %eax after the third colon tells GCC that the value of %eax is to be modified inside "asm", so GCC won’t use this register to store any other value.</li>
+</ul>
+<p>When the execution of "asm" is complete, "b" will reflect the updated value, as it is specified as an output operand. In other words, the change made to "b" inside "asm" is supposed to be reflected outside the "asm".</p>
+<h2 id="stack_switch_call">还是看看远处的stack_switch_call吧，家人们</h2>
+<pre class="highlight"><code class="language-c">static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
+  asm volatile (
+#if __x86_64__
+    "movq %0, %%rsp; movq %2, %%rdi; jmp *%1"
+      : : "b"((uintptr_t)sp), "d"(entry), "a"(arg) : "memory"
+#else
+    "movl %0, %%esp; movl %2, 4(%0); jmp *%1"
+      : : "b"((uintptr_t)sp - 8), "d"(entry), "a"(arg) : "memory"
+#endif
+  );
+}</code></pre>
+<p>先看#if __x86_64的部分</p>
+<pre class="highlight"><code class="language-c">"movq %0, %%rsp;
+ movq %2, %%rdi;
+ jmp *%1        "
+  : 
+  : "b"((uintptr_t)sp), "d"(entry), "a"(arg)
+  : "memory"</code></pre>
+<p>汇编代码里面是说</p>
+<ol>
+<li>
+<p>把sp的内容送到rsp中，即把我设置的栈的地址送到rsp寄存器里</p>
+</li>
+<li>
+<p>把函数的参数的值送到rdi寄存器里</p>
+</li>
+<li>跳转到函数entry的地址</li>
+</ol>
+<blockquote>
+<p>一开始我还感觉这个有点问题，栈跳转过去了，不用跳转回来吗？</p>
+<p>后来想明白了，我移动的是栈指针，拜托。。。</p>
+</blockquote>
+<p>其实很简单，就是调了我很久，先看第一个受害者</p>
+<pre class="highlight"><code class="language-c">#include &lt;stdint.h&gt;
+#include &lt;setjmp.h&gt;
+
+jmp_buf buf;
+int stack[1 &lt;&lt; 20];
+
+void foo() {
+    printf("Hello World\n");
+
+    longjmp(buf, 1);
+}
+
+int main() {
+    if (setjmp(buf) == 0) {
+#ifdef __x86_64__
+        asm("movq %0, %%rsp; jmp *%1;" : : "b"((uintptr_t)stack), "d"(foo) : "memory");
+#endif
+    }
+}</code></pre>
+<p>哎？去掉<code>printf("Hello World\n");</code>，一点事没有，运行完全ok，加上就寄了。</p>
+<p>我试着换成一个变量就可以运行了，怎么辉石呢？</p>
+<pre class="highlight"><code class="language-c">#include &lt;stdint.h&gt;
+#include &lt;setjmp.h&gt;
+
+jmp_buf buf;
+int stack[1 &lt;&lt; 20];
+
+void foo() {
+    int a;
+
+    longjmp(buf, 1);
+}
+
+int main() {
+    if (setjmp(buf) == 0) {
+#ifdef __x86_64__
+        asm("movq %0, %%rsp; jmp *%1;" : : "b"((uintptr_t)stack), "d"(foo) : "memory");
+#endif
+    }
+}</code></pre>
+<p>用gdb调了调一点问题没有，就是进了printf过一会就报错，我归结原因是内存不够，但4M还不够就离谱了</p>
+<p>为了验证我的猜想，我试着去消耗内存，于是</p>
+<pre class="highlight"><code class="language-c">#include &lt;stdint.h&gt;
+#include &lt;setjmp.h&gt;
+
+jmp_buf buf;
+int stack[1 &lt;&lt; 20];
+
+void add(int p) {
+    if (p &gt;= 10000) return;
+    int n = 0;
+    add(p + 1);
+}
+
+void foo() {
+    add(1);
+
+    longjmp(buf, 1);
+}
+
+int main() {
+    if (setjmp(buf) == 0) {
+#ifdef __x86_64__
+        asm("movq %0, %%rsp; jmp *%1;" : : "b"((uintptr_t)stack), "d"(foo) : "memory");
+#endif
+    }
+}</code></pre>
+<p>很快就出问题了，我一步一步的调，发现p大概涨了一点点就Segment Fault了，很明显是越界了，但数组开了这么大怎么会越界呢？</p>
+<p>--- 分割线 ---</p>
+<p>答案是rsp指向的是全局变量的空间。</p>
+<blockquote>
+<p>我验证出来的全局变量的地址是增大的，但是栈是先分配一块地址，然后从高地址向低地址增长，方向是反过来的，所以一旦写入某块不能写入的区域就寄了。</p>
+</blockquote>
+<p><strong>补充</strong></p>
+<p>gdb如何设置条件断点</p>
+<pre class="highlight"><code>b if i == 0</code></pre>
+    </div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    
+    </div>
+</body>
+</html>
