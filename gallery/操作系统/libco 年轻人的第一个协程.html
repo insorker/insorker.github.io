@@ -72,51 +72,29 @@ void       co_wait(struct co *co);</code></pre>
    - 这个上下文可以是co_yield的，也可以是co_wait的</li>
 <li>每个struct co运行结束后不能立刻回收内存<br />
    - 运行在自己的栈上，回收自己的栈，等同于我要保证我存在的情况下让自己不存在。。。</li>
-<li>不能co_yield回到一个CO_DEAD或CO_WAITING状态下的协程</li>
+<li>不能co_yield回到一个CO_DEAD或CO_WAITING状态下的协程<br />
+   - 对于CO_DEAD，嗯，不然呢<br />
+   - 对于CO_WAITING，详见第6条</li>
+<li>每个struct co的func运行完毕后需要调用co_yield，且该co_yield永远不返回<br />
+   - 这个比较好理解，func运行在struct co的栈上，如果结束，将没地方跳转（因为是通过stack_switch_call过来的），只能手动co_yield出去。这个时候如果返回还是那个问题，没地方跳转，而且不返回，最后也可以回收所有数据而不出现问题。</li>
+<li>每个struct co保存的上下文是自己co_yield出去的上下文，或者自己co_wait的上下文<br />
+   - 字面上没有问题，但为什么不能是co_wait出去的上下文？如果不是，那co_wait出去的上下文应该保存在哪里？（第二个问题后面回答）<br />
+   - 首先证明一下确实可能同时存在两个上下文。考虑正在执行协程A的时候co_yield，保存上下文context1，进入协程B。协程B调用co_wait，协程A继续执行，执行完如果不返回协程B，那么协程B永远处于CO_WAITING的状态，永远不能被co_yield入（详见第3条）。如果想要返回协程B，那么协程A就必须保存协程B的context2，此时同时存在两个context。<br />
+   - 也可以是co_wait出去的上下文，不过还是只能保存自己的，按照上面的分析，协程A还需要一个指针co_waiter指针指向协程B，否则不能返回协程B，协程B就寄了。</li>
+<li>调用co_wait的struct co不能被co_yield，或co_wait<br />
+   - 这句话是从co_wait的语义来讲，co_wait的协程（设为协程A）必须等待传入的struct co（设为B协程）运行结束，如果没有结束不能继续运行。<br />
+   - 如果被co_yield进入，那么意味着在B结束前，A继续执行，违背了定义。所以co_yield直接不能进入正在waiting的struct co就行了。<br />
+   - 如果被co_wait进入，那么意味着存在一个环，从A开始，到A结束。A等待协程B，协程B等待某个协程，以此类推（co_wait或co_yield进入其他协程），最后从某个协程进入A，这说明程序陷入死循环。所以这种情况是被禁止的。<br />
+   - 不可能出现所有程序都在wait。基于上面的一点，不能wait一个waiting，所以不可能。</li>
+<li>main函数的执行也是一个协程<br />
+   - 如果上面那个感觉是废话，这个就显得有点匪夷所思了。只有你真正编程了才会理解。（但我认为这个定义还是图个方便，可有可无。）</li>
+<li>co_yield和co_wait不能同时处于被调用的状态<br />
+   - 从逻辑上不可能同时出现</li>
+<li>co_yield可以切换到自己<br />
+   - 理由是不这么做会很麻烦。你需要一个全局变量去保存当前运行的是哪个协程，切换的时候要改变这个全局变量，还要判断是不是切换到了自己。<br />
+   - 第二是如果只有一个协程，就会死循环，自己不能切换到自己。<br />
+   - 再者，协程是模仿线程的，线程就是随机切换执行，我们照着抄就行了。</li>
 </ol>
-<ul>
-<li>
-<p>对于CO_DEAD，嗯，不然呢</p>
-</li>
-<li>
-<p>对于CO_WAITING，详见第6条<br />
-4. 每个struct co的func运行完毕后需要调用co_yield，且该co_yield永远不返回</p>
-</li>
-<li>
-<p>这个比较好理解，func运行在struct co的栈上，如果结束，将没地方跳转（因为是通过stack_switch_call过来的），只能手动co_yield出去。这个时候如果返回还是那个问题，没地方跳转，而且不返回，最后也可以回收所有数据而不出现问题。<br />
-5. 每个struct co保存的上下文是自己co_yield出去的上下文，或者自己co_wait的上下文</p>
-</li>
-<li>
-<p>字面上没有问题，但为什么不能是co_wait出去的上下文？如果不是，那co_wait出去的上下文应该保存在哪里？（第二个问题后面回答）</p>
-</li>
-<li>
-<p>首先证明一下确实可能同时存在两个上下文。考虑正在执行协程A的时候co_yield，保存上下文context1，进入协程B。协程B调用co_wait，协程A继续执行，执行完如果不返回协程B，那么协程B永远处于CO_WAITING的状态，永远不能被co_yield入（详见第3条）。如果想要返回协程B，那么协程A就必须保存协程B的context2，此时同时存在两个context。</p>
-</li>
-<li>
-<p>也可以是co_wait出去的上下文，不过还是只能保存自己的，按照上面的分析，协程A还需要一个指针co_waiter指针指向协程B，否则不能返回协程B，协程B就寄了。<br />
-6. 调用co_wait的struct co不能被co_yield，或co_wait</p>
-</li>
-<li>
-<p>这句话是从co_wait的语义来讲，co_wait的协程（设为协程A）必须等待传入的struct co（设为B协程）运行结束，如果没有结束不能继续运行。</p>
-</li>
-<li>
-<p>如果被co_yield进入，那么意味着在B结束前，A继续执行，违背了定义。所以co_yield直接不能进入正在waiting的struct co就行了。</p>
-</li>
-<li>
-<p>如果被co_wait进入，那么意味着存在一个环，从A开始，到A结束。A等待协程B，协程B等待某个协程，以此类推（co_wait或co_yield进入其他协程），最后从某个协程进入A，这说明程序陷入死循环。所以这种情况是被禁止的。</p>
-</li>
-<li>
-<p>不可能出现所有程序都在wait。基于上面的一点，不能wait一个waiting，所以不可能。<br />
-7. main函数的执行也是一个协程</p>
-</li>
-<li>如果上面那个感觉是废话，这个就显得有点匪夷所思了。只有你真正编程了才会理解。（但我认为这个定义还是图个方便，可有可无。）<br />
-8. co_yield和co_wait不能同时处于被调用的状态</li>
-<li>从逻辑上不可能同时出现<br />
-9. co_yield可以切换到自己</li>
-<li>理由是不这么做会很麻烦。你需要一个全局变量去保存当前运行的是哪个协程，切换的时候要改变这个全局变量，还要判断是不是切换到了自己。</li>
-<li>第二是如果只有一个协程，就会死循环，自己不能切换到自己。</li>
-<li>再者，协程是模仿线程的，线程就是随机切换执行，我们照着抄就行了。</li>
-</ul>
 <p>接下来是分析每个函数可能的情况</p>
 <ol>
 <li>co_yield可能出现如下情况</li>
@@ -130,6 +108,14 @@ void       co_wait(struct co *co);</code></pre>
 <li>这个看起来有点搞，怎么切换出去还是切换到自己？请看第9条</li>
 </ul>
 </li>
+<li>co_wait可能出现如下情况</li>
+<li>co_wait自己，显然是错的</li>
+<li>co_wait重复的协程，错误</li>
+<li>co_wait一个CO_DEAD的协程，同下面第3条的第2点</li>
+<li>co_wait一个CO_RUNNING or CO_NEW的协程，其实可以和上面一个合并。因为co最终总是要运行结束他的函数，然后设置为CO_DEAD，然后依据第3点判断。所以直接设一个函数co_switch_dead处理func运行结束的结果就可以了。</li>
+<li>co的func运行结束怎么办？</li>
+<li>如果没有waiter，设置状态为CO_DEAD，然后co_yield切换到别的协程</li>
+<li>如果有waiter，切换到waiter的协程，由waiter协程free自己</li>
 </ol>
 <h2 id="_3">问题</h2>
 <ol>
@@ -146,11 +132,205 @@ jmp_buf        context; // 寄存器现场 (setjmp.h)</code></pre>
 <li>这个问题其实是第一个问题的答案，但是面对第一个问题的我实在是太可爱了，舍不得删掉了</li>
 </ol>
 <p>答：真正的问题出在对栈的理解上，栈是从下往上增长的，那么你模拟栈的时候，用stack_switch_call是不是应该传入栈底而不是栈顶？即</p>
-<pre class="highlight"><code class="language-c"></code></pre>
+<pre class="highlight"><code class="language-c">stack_switch_call(co-&gt;stack + CO_STACK_SIZE, co_wrapper, (uintptr_t)co);</code></pre>
 <ol start="3">
 <li>最恐怖的错误，我的程序出现了间歇性抽风，一会儿能出结果，一会儿不能出结果</li>
 </ol>
 <p>答：答案是有段测试代码忘删了，[流汗黄豆吐舌]</p>
+<h2 id="_4">代码</h2>
+<p>忍不住贴出来了，感觉自己写的很吊</p>
+<pre class="highlight"><code class="language-c">#include "co.h"
+#include &lt;stdio.h&gt;
+#include &lt;stdint.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;setjmp.h&gt;
+#include &lt;string.h&gt;
+#include &lt;assert.h&gt;
+#include &lt;time.h&gt;
+
+#define Assert(x, s) \
+        do { if (!x) { printf("&gt; co assert: %s", s); assert(x); } } while(0)
+
+static inline void stack_switch_call(void *sp, void *entry, uintptr_t arg) {
+    asm volatile (
+        #if __x86_64__
+        "movq %0, %%rsp; movq %2, %%rdi; jmp *%1"
+        : : "b"((uintptr_t)sp), "d"(entry), "a"(arg) : "memory"
+        #else
+        "movl %0, %%esp; movl %2, 4(%0); jmp *%1"
+        : : "b"((uintptr_t)sp - 8), "d"(entry), "a"(arg) : "memory"
+        #endif
+    );
+}
+
+enum co_status {
+    CO_NEW = 1,
+    CO_RUNNING,
+    CO_WAITING,
+    CO_DEAD,
+};
+#define CO_STACK_SIZE (1 &lt;&lt; 16)
+struct co {
+    int  id;
+    char *name;
+    void (*func)(void *);
+    void *arg;
+
+    enum co_status  status;
+    struct co *             waiter;
+    jmp_buf                 context;
+    uint8_t                 stack[CO_STACK_SIZE];
+};
+
+#define CO_POOL_SIZE 128
+static struct co *current;
+static struct co *co_pool[CO_POOL_SIZE];
+static int co_pool_size;
+static void co_pool_init() {
+    for (int i = 0; i &lt; CO_POOL_SIZE; i ++ ) {
+        co_pool[i] = NULL;
+    }
+    current = NULL;
+}
+static int co_pool_insert(struct co *co) {
+    int success = 0;
+    for (int i = 0; i &lt; CO_POOL_SIZE; i ++ ) {
+        if (co_pool[i] == NULL) {
+            co_pool[i] = co;
+            co-&gt;id = i;
+            success = 1;
+            co_pool_size ++ ;
+            break;
+        }
+    }
+    return success;
+}
+static struct co *co_pool_next() {
+    int start = rand() % co_pool_size;
+    for (int i = start; i &lt; CO_POOL_SIZE + start; i ++ ) {
+        struct co *next = co_pool[i % CO_POOL_SIZE];
+        if (next == NULL)                               continue;
+        if (next-&gt;status == CO_DEAD)    continue;
+        if (next-&gt;status == CO_WAITING) continue;
+
+        return next;
+    }
+    return NULL;
+}
+void co_free(struct co *co) {
+    Assert((co != NULL), "should not free a NULL co pointer");
+
+    co_pool[co-&gt;id] = NULL;
+    co_pool_size -- ;
+
+    if (!co-&gt;name) {
+        free(co-&gt;name);
+    }
+    free(co);
+}
+
+static void co_main_init() {
+    struct co *main = co_start("main", NULL, NULL);
+    // main is just a concept to simulate the main function, not the real main
+    main-&gt;status = CO_RUNNING;
+    current = main;
+}
+
+static void co_switch_dead(struct co *co);
+static void co_wrapper(void *arg) {
+    struct co *co = (struct co *)arg;
+
+    co-&gt;func(co-&gt;arg);
+    co-&gt;status = CO_DEAD;
+    co_switch_dead(co);
+}
+
+static void co_switch_new(struct co *co) {
+    current = co;
+    co-&gt;status = CO_RUNNING;
+    stack_switch_call(co-&gt;stack + CO_STACK_SIZE, co_wrapper, (uintptr_t)co);
+}
+static void co_switch_running(struct co *co) {
+    current = co;
+    longjmp(co-&gt;context, 1);
+}
+static void co_switch_dead(struct co *co) {
+    if (co-&gt;waiter != NULL) {
+        longjmp(co-&gt;waiter-&gt;context, 1);
+    }
+    else {
+        co_yield();
+    }
+}
+static void co_switch_waiting(struct co *co) {
+    Assert(0, "execute a waiting co. "
+           "maybe a waiting circle has occured\n");
+}
+typedef void (*co_handler_t)(void *arg);
+static void *co_switch[] = {
+    [CO_NEW]                = co_switch_new,
+    [CO_RUNNING]    = co_switch_running,
+    [CO_DEAD]           = co_switch_dead,
+    [CO_WAITING]    = co_switch_waiting,
+};
+
+struct co *co_start(const char *name, void (*func)(void *), void *arg) {
+    struct co *co = (struct co *)malloc(sizeof(struct co));
+
+    co-&gt;name = (char *)malloc(sizeof(name));
+    strcpy(co-&gt;name, name);
+    co-&gt;func = func;
+    co-&gt;arg  = arg;
+
+    co-&gt;status = CO_NEW;
+    co-&gt;waiter = NULL;
+
+    co_pool_insert(co);
+
+    return co;
+}
+
+void co_yield() {
+    /* jmp_buf buf; */
+    /* int val = setjmp(buf); */
+    int val = setjmp(current-&gt;context);
+
+    if (val == 0) {
+        struct co* next = co_pool_next();
+        Assert((next != NULL), "next co to execute shouldn't be empty");
+
+        ((co_handler_t)co_switch[next-&gt;status])(next);
+    }
+    else {
+    }
+}
+
+void co_wait(struct co *co) {
+    Assert((co != NULL), "wait a null co\n");
+    Assert((co != current), "current co can't wait itself\n");
+
+    int val = setjmp(current-&gt;context);
+
+    if (val == 0) {
+        current-&gt;status = CO_WAITING;
+        co-&gt;waiter = current;
+        ((co_handler_t)co_switch[co-&gt;status])(co);
+    }
+    else {
+        co_free(co);
+        current-&gt;status = CO_RUNNING;
+    }
+}
+
+__attribute__((constructor)) void co_constructor() {
+    srand((unsigned int)time(NULL));
+    co_pool_init();
+    co_main_init();
+}
+
+__attribute__((destructor)) void co_destructor() {
+    co_free(co_pool[0]);
+}</code></pre>
     </div>
     
             
