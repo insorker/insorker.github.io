@@ -97,25 +97,29 @@ void       co_wait(struct co *co);</code></pre>
 </ol>
 <p>接下来是分析每个函数可能的情况</p>
 <ol>
-<li>co_yield可能出现如下情况</li>
-<li>co_yield到其他其他协程<ul>
+<li>
+<p>co_yield可能出现如下情况<br />
+   - co_yield到其他其他协程</p>
+<ul>
 <li>co_yield到CO_NEW</li>
 <li>co_yield到CO_RUNNING</li>
 <li>其他情况分析过，不可能出现，详见上述第3条</li>
-</ul>
-</li>
-<li>co_yield到自己<ul>
+<li>co_yield到自己</li>
 <li>这个看起来有点搞，怎么切换出去还是切换到自己？请看第9条</li>
 </ul>
 </li>
-<li>co_wait可能出现如下情况</li>
-<li>co_wait自己，显然是错的</li>
-<li>co_wait重复的协程，错误</li>
-<li>co_wait一个CO_DEAD的协程，同下面第3条的第2点</li>
-<li>co_wait一个CO_RUNNING or CO_NEW的协程，其实可以和上面一个合并。因为co最终总是要运行结束他的函数，然后设置为CO_DEAD，然后依据第3点判断。所以直接设一个函数co_switch_dead处理func运行结束的结果就可以了。</li>
-<li>co的func运行结束怎么办？</li>
-<li>如果没有waiter，设置状态为CO_DEAD，然后co_yield切换到别的协程</li>
-<li>如果有waiter，切换到waiter的协程，由waiter协程free自己</li>
+<li>
+<p>co_wait可能出现如下情况<br />
+   - co_wait自己，显然是错的<br />
+   - co_wait重复的协程，错误<br />
+   - co_wait一个CO_DEAD的协程，同下面第3条的第2点<br />
+   - co_wait一个CO_RUNNING or CO_NEW的协程，其实可以和上面一个合并。因为co最终总是要运行结束他的函数，然后设置为CO_DEAD，然后依据第3点判断。所以直接设一个函数co_switch_dead处理func运行结束的结果就可以了。</p>
+</li>
+<li>
+<p>co的func运行结束怎么办？<br />
+   - 如果没有waiter，设置状态为CO_DEAD，然后co_yield切换到别的协程<br />
+   - 如果有waiter，切换到waiter的协程，由waiter协程free自己</p>
+</li>
 </ol>
 <h2 id="_3">问题</h2>
 <ol>
