@@ -44,6 +44,113 @@
     </div>
     <div class="markdown-body">
         <h1 id="libco">libco 年轻人的第一个协程</h1>
+<p><a href="http://jyywiki.cn/OS/2022/labs/M2">实验链接</a></p>
+<h2 id="_1">失败后的反思</h2>
+<p>有时候需要自己实际跌过跟头，回头看看才知道原来的方法是多么的愚蠢。就比如我这次协程的编写思路，完全和我糟糕的算法竞赛思路如出一辙——凑出一个思路——忽略细节，不做证明——简单验证一下可行性和复杂度——code。。。——交一遍——寄——看看哪里错了（有反馈就直接按错误测试数据调）——哦，傻逼了，赶紧改代码——再交一遍——啊哈，又寄了——哦，这儿忘了改了——再交一遍——哈哈，wa了三遍了，条件判断太多了，维护不了不做了</p>
+<p>哦，错了这么多次都没能总结错在哪里，只能说是不聪明，但错了这么多次都不改，属实是又蠢又坏了。只能说接下来做题，除非简单题一眼出答案，一次ac，否则必打草稿，给出细节证明与思考，必验证正确性。</p>
+<h2 id="_2">接口</h2>
+<pre class="highlight"><code class="language-c">struct co *co_start(const char *name, void (*func)(void *), void *arg);
+void       co_yield();
+void       co_wait(struct co *co);</code></pre>
+<p>先给出课程里的介绍：</p>
+<ol>
+<li><code>co_start(name, func, arg)</code>创建一个新的协程，并返回一个指向struct co的指针 (类似于<code>pthread_create</code>)。<br />
+   - 新创建的协程从函数 <code>func</code> 开始执行，并传入参数 <code>arg</code>。新创建的协程不会立即执行，而是调用 <code>co_start</code> 的协程继续执行。<br />
+   - 使用协程的应用程序不需要知道 <code>struct co</code> 的具体定义，因此请把这个定义留在 <code>co.c</code> 中；框架代码中并没有限定 <code>struct co</code> 结构体的设计，所以你可以自由发挥。<br />
+   - <code>co_start</code> 返回的 <code>struct co</code> 指针需要分配内存。我们推荐使用 <code>malloc()</code> 分配。</li>
+<li><code>co_wait(co)</code>表示当前协程需要等待，直到co协程的执行完成才能继续执行 (类似于<code>pthread_join</code>)。<br />
+   - 在被等待的协程结束后、 <code>co_wait()</code> 返回前，<code>co_start</code> 分配的 <code>struct co</code> 需要被释放。如果你使用 <code>malloc()</code>，使用 <code>free()</code> 释放即可。<br />
+   - 因此，每个协程只能被 <code>co_wait</code> 一次 (使用协程库的程序应当保证除了初始协程外，其他协程都必须被 <code>co_wait</code> 恰好一次，否则会造成内存泄漏)。</li>
+<li><code>co_yield()</code> 实现协程的切换。协程运行后一直在 CPU 上执行，直到 <code>func</code> 函数返回或调用 <code>co_yield</code> 使当前运行的协程暂时放弃执行。<code>co_yield</code> 时若系统中有多个可运行的协程时 (包括当前协程)，你应当随机选择下一个系统中可运行的协程。</li>
+<li><code>main</code> 函数的执行也是一个协程，因此可以在 <code>main</code> 中调用 <code>co_yield</code> 或 <code>co_wait</code>。<code>main</code> 函数返回后，无论有多少协程，进程都将直接终止。</li>
+</ol>
+<p>有些东西只有真正自己code了一遍才能理解，这里给出我的思考</p>
+<p>先给出一些限制（解释一下，限制只的是编写代码的限制，不是对协程使用方式的限制，该怎么用还是按定义来，下面都是我自己的想法，可能是错的，但确实是我自己想的一套）：</p>
+<ol>
+<li>每个struct co只保存自己的上下文<br />
+   - 可能你觉得这是废话，但为什么不能保存上一次过来的上下文呢？因为试想一下这种情况，我从协程A切换到协程B，B保存了A的上下文，那么从B切换到C再从C切换到A，将无法获得A的上下文（B的存在我是不知道的，而A的上下文在B处）<br />
+   - 这个上下文可以是co_yield的，也可以是co_wait的</li>
+<li>每个struct co运行结束后不能立刻回收内存<br />
+   - 运行在自己的栈上，回收自己的栈，等同于我要保证我存在的情况下让自己不存在。。。</li>
+<li>不能co_yield回到一个CO_DEAD或CO_WAITING状态下的协程</li>
+</ol>
+<ul>
+<li>
+<p>对于CO_DEAD，嗯，不然呢</p>
+</li>
+<li>
+<p>对于CO_WAITING，详见第6条<br />
+4. 每个struct co的func运行完毕后需要调用co_yield，且该co_yield永远不返回</p>
+</li>
+<li>
+<p>这个比较好理解，func运行在struct co的栈上，如果结束，将没地方跳转（因为是通过stack_switch_call过来的），只能手动co_yield出去。这个时候如果返回还是那个问题，没地方跳转，而且不返回，最后也可以回收所有数据而不出现问题。<br />
+5. 每个struct co保存的上下文是自己co_yield出去的上下文，或者自己co_wait的上下文</p>
+</li>
+<li>
+<p>字面上没有问题，但为什么不能是co_wait出去的上下文？如果不是，那co_wait出去的上下文应该保存在哪里？（第二个问题后面回答）</p>
+</li>
+<li>
+<p>首先证明一下确实可能同时存在两个上下文。考虑正在执行协程A的时候co_yield，保存上下文context1，进入协程B。协程B调用co_wait，协程A继续执行，执行完如果不返回协程B，那么协程B永远处于CO_WAITING的状态，永远不能被co_yield入（详见第3条）。如果想要返回协程B，那么协程A就必须保存协程B的context2，此时同时存在两个context。</p>
+</li>
+<li>
+<p>也可以是co_wait出去的上下文，不过还是只能保存自己的，按照上面的分析，协程A还需要一个指针co_waiter指针指向协程B，否则不能返回协程B，协程B就寄了。<br />
+6. 调用co_wait的struct co不能被co_yield，或co_wait</p>
+</li>
+<li>
+<p>这句话是从co_wait的语义来讲，co_wait的协程（设为协程A）必须等待传入的struct co（设为B协程）运行结束，如果没有结束不能继续运行。</p>
+</li>
+<li>
+<p>如果被co_yield进入，那么意味着在B结束前，A继续执行，违背了定义。所以co_yield直接不能进入正在waiting的struct co就行了。</p>
+</li>
+<li>
+<p>如果被co_wait进入，那么意味着存在一个环，从A开始，到A结束。A等待协程B，协程B等待某个协程，以此类推（co_wait或co_yield进入其他协程），最后从某个协程进入A，这说明程序陷入死循环。所以这种情况是被禁止的。</p>
+</li>
+<li>
+<p>不可能出现所有程序都在wait。基于上面的一点，不能wait一个waiting，所以不可能。<br />
+7. main函数的执行也是一个协程</p>
+</li>
+<li>如果上面那个感觉是废话，这个就显得有点匪夷所思了。只有你真正编程了才会理解。（但我认为这个定义还是图个方便，可有可无。）<br />
+8. co_yield和co_wait不能同时处于被调用的状态</li>
+<li>从逻辑上不可能同时出现<br />
+9. co_yield可以切换到自己</li>
+<li>理由是不这么做会很麻烦。你需要一个全局变量去保存当前运行的是哪个协程，切换的时候要改变这个全局变量，还要判断是不是切换到了自己。</li>
+<li>第二是如果只有一个协程，就会死循环，自己不能切换到自己。</li>
+<li>再者，协程是模仿线程的，线程就是随机切换执行，我们照着抄就行了。</li>
+</ul>
+<p>接下来是分析每个函数可能的情况</p>
+<ol>
+<li>co_yield可能出现如下情况</li>
+<li>co_yield到其他其他协程<ul>
+<li>co_yield到CO_NEW</li>
+<li>co_yield到CO_RUNNING</li>
+<li>其他情况分析过，不可能出现，详见上述第3条</li>
+</ul>
+</li>
+<li>co_yield到自己<ul>
+<li>这个看起来有点搞，怎么切换出去还是切换到自己？请看第9条</li>
+</ul>
+</li>
+</ol>
+<h2 id="_3">问题</h2>
+<ol>
+<li>玄学问题，在调用完stack_switch_call后，co-&gt;waiter的值就变了</li>
+</ol>
+<p>答：我是百思不得其解啊，调了很久的gdb，其他的值都对，就waiter不对，然后我把</p>
+<pre class="highlight"><code class="language-c">jmp_buf        context; // 寄存器现场 (setjmp.h)
+struct co *    waiter;  // 是否有其他协程在等待当前协程</code></pre>
+<p>改成了</p>
+<pre class="highlight"><code class="language-c">struct co *    waiter;  // 是否有其他协程在等待当前协程
+jmp_buf        context; // 寄存器现场 (setjmp.h)</code></pre>
+<p>问题就解决了？？？</p>
+<ol start="2">
+<li>这个问题其实是第一个问题的答案，但是面对第一个问题的我实在是太可爱了，舍不得删掉了</li>
+</ol>
+<p>答：真正的问题出在对栈的理解上，栈是从下往上增长的，那么你模拟栈的时候，用stack_switch_call是不是应该传入栈底而不是栈顶？即</p>
+<pre class="highlight"><code class="language-c"></code></pre>
+<ol start="3">
+<li>最恐怖的错误，我的程序出现了间歇性抽风，一会儿能出结果，一会儿不能出结果</li>
+</ol>
+<p>答：答案是有段测试代码忘删了，[流汗黄豆吐舌]</p>
     </div>
     
             
