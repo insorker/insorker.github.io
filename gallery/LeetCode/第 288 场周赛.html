@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第 288 场周赛</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <link rel="stylesheet" href="/css/github.min.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            第 288 场周赛
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | posted on 2022-04-10</span>
+        </div>
+    </div>
+    <div class="markdown-body">
+        <h1 id="288">第 288 场周赛</h1>
+<h1 id="t1">T1</h1>
+<p>自己做的有点笨拙</p>
+<pre class="highlight"><code class="language-c++">class Solution {
+public:
+
+    int largestInteger(int num) {
+        int n = 0, m = 0;
+        int st[10];
+
+            vector&lt;int&gt; old, even;
+            n = num;
+            int tmp = n, cnt = 0;
+            while (tmp) {
+                int c = tmp % 10;
+                if (c &amp; 1) {
+                    old.push_back(c);
+                }
+                else
+                    even.push_back(c);
+                tmp /= 10;
+                st[cnt++] = c &amp; 1;
+            }
+
+            sort(old.begin(), old.end(), [=](int a, int b) { return a &gt; b; });
+            sort(even.begin(), even.end(), [=](int a, int b) { return a &gt; b; });
+
+            int a = 0, b = 0;
+            for (int i = cnt - 1; i &gt;= 0; i--) {
+                m *= 10;
+                if (st[i]) {
+                     m += old[a++];
+                }
+                else
+                    m += even[b++];
+            }
+            return m;
+    }
+};</code></pre>
+<h2 id="t2">T2</h2>
+<p>暴力枚举就行了</p>
+<pre class="highlight"><code class="language-c++">class Solution {
+public:
+    string minimizeResult(string expression) {
+        string num1, num2;
+        for (int i = 0; i &lt; expression.size(); i ++ ) {
+            if (expression[i] == '+') {
+                num1 = expression.substr(0, i);
+                num2 = expression.substr(i + 1);
+                break;
+            }
+        }
+
+        int minv = atoi(num1.c_str()) + atoi(num2.c_str());
+        string minstr = "(" + expression + ")";
+
+        for (int i = 0; i &lt; num1.size(); i ++ ) {
+            for (int j = 0; j &lt; num2.size(); j ++ ) {
+                int l1, l2, r1, r2, sum;
+                string sl1, sr2;
+                if (i == 0) {
+                    l1 = 1;
+                    sl1 = "";
+                }
+                else {
+                    l1 = atoi(num1.substr(0, i).c_str());
+                    sl1 = num1.substr(0, i);
+                }
+                if (j == num2.size() - 1) {
+                    r2 = 1;
+                    sr2 = "";
+                }
+                else {
+                    r2 = atoi(num2.substr(j + 1, num2.size() - j - 1).c_str());
+                    sr2 = num2.substr(j + 1, num2.size() - j - 1);
+                }
+
+                l2 = atoi(num1.substr(i, num1.size() - i).c_str());
+                r1 = atoi(num2.substr(0, j + 1).c_str());
+
+                sum = l1 * (l2 + r1) * r2;
+                if (sum &lt; minv) {
+                    minv = sum;
+                    minstr = sl1 + "(" + num1.substr(i, num1.size() - i) + "+"
+                        + num2.substr(0, j + 1) + ")" + sr2;
+                }
+            }
+        }
+        return minstr;
+    }
+};</code></pre>
+<h2 id="t3">T3</h2>
+<p>小根堆的题目</p>
+<pre class="highlight"><code class="language-c++">class Solution {
+public:
+    static const int MOD = 1e9 + 7;
+
+    int maximumProduct(vector&lt;int&gt;&amp; nums, int k) {
+        priority_queue&lt;int,vector&lt;int&gt;,greater&lt;int&gt; &gt; heap;
+        for (auto &amp;c : nums) {
+            heap.push(c);
+        }
+        while (k -- ) {
+            int t = heap.top(); heap.pop();
+            t ++ ;
+            heap.push(t);
+        }
+
+        long long res = 1;
+        while (heap.size()) {
+            res = (res * heap.top()) % MOD; heap.pop();
+        }
+        return res;
+    }
+};</code></pre>
+<h2 id="t4">T4</h2>
+<p>没做出来</p>
+    </div>
+    
+            
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    
+    </div>
+</body>
+</html>

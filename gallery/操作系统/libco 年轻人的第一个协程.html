@@ -135,7 +135,7 @@ jmp_buf        context; // 寄存器现场 (setjmp.h)</code></pre>
 <ol start="2">
 <li>这个问题其实是第一个问题的答案，但是面对第一个问题的我实在是太可爱了，舍不得删掉了</li>
 </ol>
-<p>答：真正的问题出在对栈的理解上，栈是从下往上增长的，那么你模拟栈的时候，用stack_switch_call是不是应该传入栈底而不是栈顶？即</p>
+<p>答：真正的问题出在对栈的理解上，栈是从下往上增长的，那么你模拟栈的时候，用stack_switch_call是不是应该传入栈底而不是栈顶，不然的话你会覆盖其他变量的值，比如出现上面那个问题</p>
 <pre class="highlight"><code class="language-c">stack_switch_call(co-&gt;stack + CO_STACK_SIZE, co_wrapper, (uintptr_t)co);</code></pre>
 <ol start="3">
 <li>最恐怖的错误，我的程序出现了间歇性抽风，一会儿能出结果，一会儿不能出结果</li>
