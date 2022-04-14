@@ -5,7 +5,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>charimg-py</title>
+    <title>「zcp」文件</title>
     <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
     <link href="/css/yori.css" rel="stylesheet" />
     
@@ -35,17 +35,18 @@
             
     <div class="content-header">
         <div class="post-title">
-            charimg-py
+            「zcp」文件
         </div>
         <div class="post-meta">
             <span>insorker</span>
-            <span> | posted on 2022-04-14</span>
+            <span> | posted on 2022-04-12</span>
         </div>
     </div>
     <div class="markdown-body">
-        <h1 id="charimg-py">charimg-py</h1>
-<p><a href="https://github.com/insorker/charimg-py"><img alt="insorker/charimg-py - GitHub" src="https://gh-card.dev/repos/insorker/charimg-py.svg" /></a></p>
-<p>a tiny tool to print image in cmdline</p>
+        <h1 id="zcp">zcp文件</h1>
+<p>思路是模仿string的操作（很奇怪吧），把它当成一个字符串从中读取数据。</p>
+<h2 id="buffer">双Buffer</h2>
+<p>思路是用两个buffer轮流读取，每次其中一个buffer的数据被读完了（包括滑动窗口中不再包含相关数据），就读入文本文件中的内容。</p>
     </div>
     
             
