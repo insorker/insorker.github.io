@@ -11,6 +11,7 @@
     
     <link rel="stylesheet" href="/css/github-markdown.min.css">
     <link rel="stylesheet" href="/css/github.min.css">
+    <link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
     <style type="text/css">
         .markdown-body {
             box-sizing: border-box;
@@ -46,6 +47,8 @@
         <h1 id="_1">微记</h1>
 <p>也许以后会给博客做一个微记功能，希望到时候搬迁不会累死。</p>
 <h2 id="2022">2022</h2>
+<h3 id="417">4.17</h3>
+<p>今天的LeetCode被干爆了，本来思路是对的，发现写的太复杂就换了个策略，写完了发现复杂度爆了，又回头拾起了原方法，结果过了12点几分钟才做完，ε=(´ο｀*)))唉。</p>
 <h3 id="414">4.14</h3>
 <p>今天小学了一下go，有点找回第一次学编程的快乐了，不过多了一些欢乐的吐槽hh</p>
 <p>感觉时间过得好快，又好慢，四月都已经过了一半了，但是开学也才一个多月，有点奇妙。</p>
@@ -71,6 +74,8 @@
     
             
 
+    <div id="comment"></div>
+
         </div>
         <div id="footer">
             
@@ -81,6 +86,19 @@
         
     <script src="/js/highlight.min.js"></script>
     <script>hljs.highlightAll();</script>
+    <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+    <script>
+        var gitment = new Gitment({
+            id: 1650203850.2430556,
+            owner: 'insorker',
+            repo: 'insorker.github.io',
+            oauth: {
+                client_id: '1c8b8a648872fb4b06e5',
+                client_secret: 'e7aa56cb8653e89050195484e973f5de0cb46781',
+            },
+        })
+        gitment.render('comment')
+    </script>
 
     
     </div>
