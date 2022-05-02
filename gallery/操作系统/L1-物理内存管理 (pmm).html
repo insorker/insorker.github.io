@@ -5,7 +5,7 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>zcp</title>
+    <title>L1-物理内存管理 (pmm)</title>
     <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
     <link href="/css/yori.css" rel="stylesheet" />
     
@@ -36,17 +36,44 @@
             
     <div class="content-header">
         <div class="post-title">
-            zcp
+            L1-物理内存管理 (pmm)
         </div>
         <div class="post-meta">
             <span>insorker</span>
-            <span> | posted on 2022-05-02</span>
+            <span> | posted on 2022-04-27</span>
         </div>
     </div>
     <div class="markdown-body">
-        <h1 id="zcp">zcp</h1>
-<p><a href="https://github.com/insorker/zcp"><img alt="insorker/zcp - GitHub" src="https://gh-card.dev/repos/insorker/zcp.svg" /></a></p>
-<p>a tiny compression tool</p>
+        <h1 id="l1-pmm">L1-物理内存管理 (pmm)</h1>
+<p>听起来很简单，实际还是有点难度的。</p>
+<h2 id="_1">思路</h2>
+<p><a href="https://www.bilibili.com/video/BV17F411s7e9?spm_id_from=333.999.0.0">https://www.bilibili.com/video/BV17F411s7e9?spm_id_from=333.999.0.0</a></p>
+<p>视频最后简单介绍了一下实现思路，这里我归纳了一下。</p>
+<h3 id="_2">堆区内存单元大小</h3>
+<p>64kb为一个区域，每个区域的最小单元为16b</p>
+<h3 id="_3">待分配内存单元大小</h3>
+<p>假设所有待分配内存都做了对齐（对齐到2^i^b)，设对齐后需分配的大小为A</p>
+<blockquote>
+<p>这种假设的好处就是实现起来会简单很多，坏处就是如果我要分配64kb + 1b的内存，那么我就不得不开出128kb的内存，效率接近50%。</p>
+</blockquote>
+<ol>
+<li>大于64kb</li>
+</ol>
+<p>对每次已分配的内存加上64kb，直到大于A</p>
+<ol start="2">
+<li>小于等于64kb</li>
+</ol>
+<p>分配等于A大小的内存</p>
+<h3 id="_4">堆区内存数据结构</h3>
+<p>对于每个64kb区间内部，包含一个头部指针，和一个内容指针，一个是否与下一项相连</p>
+<pre class="highlight"><code class="language-c">typedef struct heap_block {
+    void *head;
+    void *cont;
+    char next;
+} heap_block;</code></pre>
+<p>head 采取类似线段树的结构，用一个大数组维护整个区间的状态，1表示已分配，0表示空闲</p>
+<p>cont 里面存放所有即将kalloc出去的内容</p>
+<p>next 如果为1，表示下一个64kb也被分配</p>
     </div>
     
             
@@ -71,7 +98,7 @@
             repo: 'insorker.github.io', // The repository of store comments,
             owner: 'insorker',
             admin: ['insorker'],
-            id: '1648825149.4299295', // Ensure uniqueness and length less than 50
+            id: '1651068810.984686', // Ensure uniqueness and length less than 50
             distractionFreeMode: false  // Facebook-like distraction free mode
         })
         gitalk.render('gitalk-container')
