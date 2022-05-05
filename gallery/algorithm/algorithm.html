@@ -76,13 +76,30 @@ void add(int k, int v) {
 void remove(int k) {
     ne[k] = ne[ne[k]];
 }</code></pre>
-<h3 id="_5">前缀和</h3>
+<h3 id="_5">双向链表</h3>
+<pre class="highlight"><code class="language-c++">int e[N], le[N], ri[N], idx;
+
+void init() {
+    ri[0] = 1, le[1] = 0, idx = 2;
+}
+
+void add(int a, int v) {
+    e[idx] = v;
+    le[idx] = a, ri[idx] = r[a];
+    l[r[a]] = idx, r[a] = idx++;
+}
+
+void remove(int a) {
+    l[r[a]] = l[a];
+    r[l[a]] = r[a];
+}</code></pre>
+<h3 id="_6">前缀和</h3>
 <pre class="highlight"><code class="language-c++">int a[N], s[N];
 
 int main() {
     for (int i = 1; i &lt;= n; i ++ ) s[i] = a[i] + s[i - 1];
 }</code></pre>
-<h3 id="_6">差分</h3>
+<h3 id="_7">差分</h3>
 <pre class="highlight"><code class="language-c++">int a[N], b[N];
 
 void add(int l, int r, int v) {
@@ -93,7 +110,7 @@ void add(int l, int r, int v) {
 int main() {
     for (int i = 1; i &lt;= n; i ++ ) add(i, i, a[i]);
 }</code></pre>
-<h3 id="_7">并查集</h3>
+<h3 id="_8">并查集</h3>
 <pre class="highlight"><code class="language-c++">int p[N];
 
 void init() {
@@ -104,7 +121,7 @@ int find(int x) {
         p[x] = find(p[x]);
     return p[x];
 }</code></pre>
-<h3 id="_8">单调栈</h3>
+<h3 id="_9">单调栈</h3>
 <pre class="highlight"><code class="language-c++">int stk[N], tt;
 
 // 存距离最近的最大的数
@@ -112,8 +129,17 @@ void add(int v) {
     while (tt &amp;&amp; stk[tt] &lt;= v) tt -- ;
     stk[ ++ tt] = v;
 }</code></pre>
-<h3 id="_9">单调队列</h3>
-<h2 id="_10">数学</h2>
+<h3 id="_10">单调队列 &amp;&amp; 滑动窗口</h3>
+<pre class="highlight"><code class="language-c++">int q[N];   // q存储下标
+int hh, tt = -1;
+
+// k表示窗口大小
+for (int i = 0; i &lt; n; i++) {
+    if (hh &lt;= tt &amp;&amp; i - k + 1 &gt; q[hh]) hh++;
+    while (hh &lt;= tt /* &amp;&amp; 某项性质被满足，弹出栈顶元素 */) tt--;
+    q[++tt] = i;
+}</code></pre>
+<h2 id="_11">数学</h2>
 <h3 id="gcd">gcd</h3>
 <pre class="highlight"><code class="language-c++">int gcd(int a, int b) {
     // a &gt;= b;
@@ -124,7 +150,7 @@ void add(int v) {
     }
     return a;
 }</code></pre>
-<h3 id="_11">快速幂</h3>
+<h3 id="_12">快速幂</h3>
 <pre class="highlight"><code class="language-c++">typedef long long LL;
 LL qmi(int a, int b, int p) {
     int res = 1 % p;
@@ -135,7 +161,7 @@ LL qmi(int a, int b, int p) {
     }
     return res;
 }</code></pre>
-<h2 id="_12">字符串</h2>
+<h2 id="_13">字符串</h2>
 <h3 id="trie">Trie树</h3>
 <pre class="highlight"><code class="language-c++">// 这里以26个字母的字符串建树为例子，N是字符串最长长度
 int son[N][26], cnt[N], idx;
@@ -162,7 +188,7 @@ int query(char *str) {
     }
     return cnt[p]; // 返回出现了几次
 }</code></pre>
-<h2 id="_13">图论</h2>
+<h2 id="_14">图论</h2>
 <h3 id="dijkstra">朴素dijkstra</h3>
 <blockquote>
 <p>O(n^2)，处理稠密图</p>
@@ -336,7 +362,7 @@ int main() {
     if (dist[x][y] &gt; INF / 2) false;    // 所有边都会更新
     else dist[x][y];
 }</code></pre>
-<h3 id="_14">最小生成树</h3>
+<h3 id="_15">最小生成树</h3>
 <h4 id="prim">Prim</h4>
 <pre class="highlight"><code class="language-c++">const int INF = 0x3f3f3f3f;
 int n, m;
@@ -404,7 +430,7 @@ int main() {
     if (cnt &lt; n - 1) false; // 因为n个点有n-1条边，如果达不到，说明不是连通图
     else res;
 }</code></pre>
-<h2 id="_15">动态规划</h2>
+<h2 id="_16">动态规划</h2>
 <h3 id="01">01背包问题</h3>
 <pre class="highlight"><code class="language-c++">    for (int i = 1; i &lt;= n; i ++ )
         for (int j = m; j &gt;= v[i]; j -- )
@@ -435,7 +461,7 @@ int main() {
             repo: 'insorker.github.io', // The repository of store comments,
             owner: 'insorker',
             admin: ['insorker'],
-            id: '1648734494.5308437', // Ensure uniqueness and length less than 50
+            id: '1651736249.5094838', // Ensure uniqueness and length less than 50
             distractionFreeMode: false  // Facebook-like distraction free mode
         })
         gitalk.render('gitalk-container')
