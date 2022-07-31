@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tai-e A1</title>
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico" />
+    <link href="/css/yori.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="/css/github-markdown.min.css">
+    <link rel="stylesheet" href="/css/github.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.css">
+    <style type="text/css">
+        .markdown-body {
+            box-sizing: border-box;
+            min-width: 200px;
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 45px;
+        }
+
+        @media (max-width: 767px) {
+            .markdown-body {
+                padding: 15px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <div class="container">
+    
+        <div id="content">
+            
+    <div class="content-header">
+        <div class="post-title">
+            Tai-e A1
+        </div>
+        <div class="post-meta">
+            <span>insorker</span>
+            <span> | posted on 2022-05-05</span>
+        </div>
+    </div>
+    <div class="markdown-body">
+        <h1 id="tai-e-a1">Tai-e A1</h1>
+<h2 id="_1">前言</h2>
+<p>今天是卡尔的生日，让我们祝卡尔生日快乐\(\^o\^)/~</p>
+<h2 id="_2">速览</h2>
+<p>我已经大概把框架扫了一遍，虽然不是很熟悉Java，但还是OK的，里面大部分的语句命名和注释都给了很详细的信息，最重要的是代码普遍很简单，大部分都是简单的封装，至少我目前没看到有复杂逻辑的地方，而且我看到的需要复杂逻辑的都要我们自己实现（哈哈。</p>
+<p>虽然看了一遍但是记不住啊，接下来就开始从题目出发，题目用到了什么我再细看什么。</p>
+<h2 id="_3">实现活跃变量分析</h2>
+<h3 id="setfact-newboundaryfactcfg">SetFact newBoundaryFact(CFG)</h3>
+<pre class="highlight"><code class="language-java">public SetFact&lt;Var&gt; newBoundaryFact(CFG&lt;Stmt&gt; cfg) {
+    // TODO - finish me
+    return null;
+}</code></pre>
+<h4 id="_4">源码分析</h4>
+<h5 id="cfgn">CFG\&lt;N></h5>
+<p>这个很简单啊，就是提供了一些关于Node的CFG接口，这个Node可以是一个BB(Basic Block)。 换而言之，就是我现在有个Control Flow Graph，里面有一堆Node，你可以传一个Node变量，我可以告诉你：</p>
+<pre class="highlight"><code class="language-java">package pascal.taie.analysis.graph.cfg;
+
+    boolean isEntry(N node);            // 这个Node是entry吗
+    boolean isExit(N node);             // 是exit吗
+    Set&lt;Edge&lt;N&gt;&gt; getInEdgesOf(N node);  // 入边
+    Set&lt;Edge&lt;N&gt;&gt; getOutEdgesOf(N node); // 出边</code></pre>
+<h5 id="stmt">Stmt</h5>
+<p>更简单了，就是IR的statement，比较关键的部分是</p>
+<pre class="highlight"><code class="language-java">package pascal.taie.ir.stmt;
+
+    Optional&lt;LValue&gt; getDef();  // 获取左值（等号左边，0或1个）
+    List&lt;RValue&gt; getUses();     // 获取右值（等号右边，多个）</code></pre>
+<h5 id="setfactn">SetFact\&lt;N></h5>
+<p>这个Set不是设置的意思，是集合的意思，Fact我的理解是Data-Flow中我们要分析的对象，包括（Reaching-Definition、Live-Variables等），综上就是分析对象的集合。</p>
+<p>里面的操作也很好读，就是集合的操作换了个名字，比较重要的有</p>
+<pre class="highlight"><code class="language-java">package pascal.taie.analysis.dataflow.fact;
+
+    public boolean union(SetFact&lt;E&gt; other)
+    public boolean intersect(SetFact&lt;E&gt; other)
+    public boolean equals(Object o);</code></pre>
+<h5 id="var">Var</h5>
+<p>这个看继承关系就知道是干什么得了，当然暂时我们不注重它具体可以是什么，而关注它的语义</p>
+<pre class="highlight"><code class="language-java">package pascal.taie.ir.exp;
+
+    public class Var implements LValue, RValue, Indexable</code></pre>
+<p>里面还有个内部类</p>
+<pre class="highlight"><code class="language-java">private static class RelevantStmts</code></pre>
+<p>自己看注释去，注释很清楚</p>
+<h4 id="go">Go</h4>
+<p>然后就很简单了，难的地方在于你不知道他的逻辑是什么</p>
+    </div>
+    
+            
+
+    <div id="gitalk-container"></div>
+
+        </div>
+        <div id="footer">
+            
+            
+        </div>
+        
+
+        
+    <script src="/js/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script src="https://cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js"></script>
+    <script>
+        const gitalk = new Gitalk({
+            clientID: '1c8b8a648872fb4b06e5',
+            clientSecret: 'e7aa56cb8653e89050195484e973f5de0cb46781',
+            repo: 'insorker.github.io', // The repository of store comments,
+            owner: 'insorker',
+            admin: ['insorker'],
+            id: '1651934257.1098137', // Ensure uniqueness and length less than 50
+            distractionFreeMode: false  // Facebook-like distraction free mode
+        })
+        gitalk.render('gitalk-container')
+    </script>
+
+    
+    </div>
+</body>
+</html>

@@ -85,13 +85,13 @@ void init() {
 
 void add(int a, int v) {
     e[idx] = v;
-    le[idx] = a, ri[idx] = r[a];
-    l[r[a]] = idx, r[a] = idx++;
+    le[idx] = a, ri[idx] = ri[a];
+    le[ri[a]] = idx, ri[a] = idx++;
 }
 
 void remove(int a) {
-    l[r[a]] = l[a];
-    r[l[a]] = r[a];
+    le[ri[a]] = le[a];
+    ri[le[a]] = ri[a];
 }</code></pre>
 <h3 id="_6">前缀和</h3>
 <pre class="highlight"><code class="language-c++">int a[N], s[N];
@@ -161,7 +161,8 @@ LL qmi(int a, int b, int p) {
     }
     return res;
 }</code></pre>
-<h2 id="_13">字符串</h2>
+<h2 id="_13">树</h2>
+<h2 id="_14">字符串</h2>
 <h3 id="trie">Trie树</h3>
 <pre class="highlight"><code class="language-c++">// 这里以26个字母的字符串建树为例子，N是字符串最长长度
 int son[N][26], cnt[N], idx;
@@ -188,7 +189,7 @@ int query(char *str) {
     }
     return cnt[p]; // 返回出现了几次
 }</code></pre>
-<h2 id="_14">图论</h2>
+<h2 id="_15">图论</h2>
 <h3 id="dijkstra">朴素dijkstra</h3>
 <blockquote>
 <p>O(n^2)，处理稠密图</p>
@@ -362,7 +363,7 @@ int main() {
     if (dist[x][y] &gt; INF / 2) false;    // 所有边都会更新
     else dist[x][y];
 }</code></pre>
-<h3 id="_15">最小生成树</h3>
+<h3 id="_16">最小生成树</h3>
 <h4 id="prim">Prim</h4>
 <pre class="highlight"><code class="language-c++">const int INF = 0x3f3f3f3f;
 int n, m;
@@ -430,7 +431,7 @@ int main() {
     if (cnt &lt; n - 1) false; // 因为n个点有n-1条边，如果达不到，说明不是连通图
     else res;
 }</code></pre>
-<h2 id="_16">动态规划</h2>
+<h2 id="_17">动态规划</h2>
 <h3 id="01">01背包问题</h3>
 <pre class="highlight"><code class="language-c++">    for (int i = 1; i &lt;= n; i ++ )
         for (int j = m; j &gt;= v[i]; j -- )
@@ -461,7 +462,7 @@ int main() {
             repo: 'insorker.github.io', // The repository of store comments,
             owner: 'insorker',
             admin: ['insorker'],
-            id: '1651736249.5094838', // Ensure uniqueness and length less than 50
+            id: '1651737602.9636245', // Ensure uniqueness and length less than 50
             distractionFreeMode: false  // Facebook-like distraction free mode
         })
         gitalk.render('gitalk-container')
