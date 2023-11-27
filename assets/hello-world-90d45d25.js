@@ -1,6 +1,0 @@
-import{d as e,o as t,c as o,C as l,_ as n}from"./app-6aaf0d91.js";const a={class:"markdown-body"},r=l(`<h1>Hello World! This is yori-vue! 🎉🎉🎉</h1><p>Adopted the GitHub Markdown style.</p><p>采用 github 的 markdown 样式。</p><pre><code class="language-c"><span class="hljs-meta">#<span class="hljs-keyword">include</span> <span class="hljs-string">&lt;stdio.h&gt;</span></span>
-
-<span class="hljs-type">int</span> <span class="hljs-title function_">main</span><span class="hljs-params">()</span> {
-  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Hello World!\\n&quot;</span>);
-}
-</code></pre>`,4),i=[r],m={title:"Hello World",date:"2023-05-04T00:00:00.000Z",brief:"This is the FIRST 'Hello World'!",image:"https://image.insorker.site/2023/08/48b730d215b8549edc5230fd568e78d1.png"},f="",d=e({__name:"hello-world",setup(p,{expose:s}){return s({frontmatter:{title:"Hello World",date:"2023-05-04T00:00:00.000Z",brief:"This is the FIRST 'Hello World'!",image:"https://image.insorker.site/2023/08/48b730d215b8549edc5230fd568e78d1.png"},excerpt:void 0}),(c,h)=>(t(),o("div",a,i))}}),u=n(d,[["__file","D:/Project/_blog/yori-vue/docs/note/hello-world.md"]]);export{u as default,f as excerpt,m as frontmatter};
