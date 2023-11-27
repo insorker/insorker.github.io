@@ -1,1 +1,0 @@
-import{A as n,g as o,B as u}from"./app-e592db3c.js";const c=n("post-meta",()=>{const e=o([]),a=o({});for(let t of u)e.value.push({path:t.path,meta:t.meta}),a.value[t.path]=t.meta;return e.value.sort((t,s)=>{const r=new Date(s.meta.date).getTime(),m=new Date(t.meta.date).getTime();return r-m}),{metaArray:e,metaHash:a}});export{c as u};
