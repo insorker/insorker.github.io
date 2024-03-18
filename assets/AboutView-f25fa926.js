@@ -1,1 +1,0 @@
-import{d as e,a as _,o as t}from"./app-ccc73758.js";import{_ as o}from"./_plugin-vue_export-helper-c27b6911.js";const s={class:"about"},a=e({__name:"AboutView",setup(n){return(c,p)=>(t(),_("div",s," To be built ... "))}});const u=o(a,[["__scopeId","data-v-61ba2f3e"]]);export{u as default};
