@@ -1,1 +1,0 @@
-import{_ as e}from"./_plugin-vue_export-helper-c27b6911.js";import{c as _,o}from"./app-4cc86b3c.js";const t={},c={class:"about"};function s(a,n){return o(),_("div",c," 你似乎来到了没有知识存在的荒原··· ")}const i=e(t,[["render",s],["__scopeId","data-v-93d368ea"]]);export{i as default};
