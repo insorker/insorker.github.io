@@ -17,18 +17,18 @@
     "/assets/remixicon-931f98fd.svg"
   ],
   "../../../../../Not-By-AI/Written-By-Human-Not-By-AI-Badge-black.svg": [
-    "/assets/PostView-7e3f0dda.js",
-    "/assets/PostView-6e6844ba.css"
+    "/assets/PostView-2cd9e5b8.js",
+    "/assets/PostView-ddd4b9e8.css"
   ],
   "../../../../../Not-By-AI/Written-By-Human-Not-By-AI-Badge-white.svg": [
-    "/assets/PostView-7e3f0dda.js",
-    "/assets/PostView-6e6844ba.css"
+    "/assets/PostView-2cd9e5b8.js",
+    "/assets/PostView-ddd4b9e8.css"
   ],
   "../../../../../avatar.webp": [
     "/assets/avatar-298f14ce.js"
   ],
   "docs/about/config.json": [
-    "/assets/AboutView-5c78121a.js",
+    "/assets/AboutView-9cee9cfc.js",
     "/assets/AboutView-f04e7b9b.css"
   ],
   "docs/home/config.json": [
@@ -38,32 +38,32 @@
     "/assets/remixicon-b074b4f2.ttf",
     "/assets/remixicon-931f98fd.svg"
   ],
-  "docs/posts/2023.11.14 从东到西.md": [
-    "/assets/2023.11.14 从东到西-dcd5deb2.js"
+  "docs/posts/2023.11.14-from-east-to-west.md": [
+    "/assets/2023.11.14-from-east-to-west-b937ffa6.js"
   ],
-  "docs/posts/2023.11.14 从东到西.md?vue&type=script&setup=true&lang.ts": [
-    "/assets/2023.11.14 从东到西-dcd5deb2.js"
+  "docs/posts/2023.11.14-from-east-to-west.md?vue&type=script&setup=true&lang.ts": [
+    "/assets/2023.11.14-from-east-to-west-b937ffa6.js"
   ],
-  "docs/posts/2024.04.06 睡在月亮上.md": [
-    "/assets/2024.04.06 睡在月亮上-e2ee040f.js"
+  "docs/posts/2024.04.06-sleep-on-the-moon.md": [
+    "/assets/2024.04.06-sleep-on-the-moon-b6c0c558.js"
   ],
-  "docs/posts/2024.04.06 睡在月亮上.md?vue&type=script&setup=true&lang.ts": [
-    "/assets/2024.04.06 睡在月亮上-e2ee040f.js"
+  "docs/posts/2024.04.06-sleep-on-the-moon.md?vue&type=script&setup=true&lang.ts": [
+    "/assets/2024.04.06-sleep-on-the-moon-b6c0c558.js"
   ],
-  "docs/posts/个人站！By yori-vue.md": [
-    "/assets/个人站！By yori-vue-0b114d20.js"
+  "docs/posts/new-personal-site.md": [
+    "/assets/new-personal-site-b2ce3b32.js"
   ],
-  "docs/posts/个人站！By yori-vue.md?vue&type=script&setup=true&lang.ts": [
-    "/assets/个人站！By yori-vue-0b114d20.js"
+  "docs/posts/new-personal-site.md?vue&type=script&setup=true&lang.ts": [
+    "/assets/new-personal-site-b2ce3b32.js"
   ],
-  "docs/posts/博客建站.md": [
-    "/assets/博客建站-30fd4e79.js"
+  "docs/posts/site-build.md": [
+    "/assets/site-build-62b3f9a5.js"
   ],
-  "docs/posts/博客建站.md?vue&type=script&setup=true&lang.ts": [
-    "/assets/博客建站-30fd4e79.js"
+  "docs/posts/site-build.md?vue&type=script&setup=true&lang.ts": [
+    "/assets/site-build-62b3f9a5.js"
   ],
   "docs/projects/config.json": [
-    "/assets/ProjectView-4ec6614c.js",
+    "/assets/ProjectView-0311af61.js",
     "/assets/ProjectView-9e611fe9.css"
   ],
   "index.html": [
@@ -77,8 +77,8 @@
     "/assets/giscus-BNK3dBIH-a0a9d5c1.js"
   ],
   "node_modules/@giscus/vue/dist/index.js": [
-    "/assets/PostView-7e3f0dda.js",
-    "/assets/PostView-6e6844ba.css"
+    "/assets/PostView-2cd9e5b8.js",
+    "/assets/PostView-ddd4b9e8.css"
   ],
   "node_modules/@iconify/vue/dist/iconify.mjs": [
     "/assets/remixicon-3d7b8a45.eot",
@@ -144,8 +144,8 @@
     "/assets/remixicon-931f98fd.svg"
   ],
   "node_modules/highlight.js/styles/github.css": [
-    "/assets/PostView-7e3f0dda.js",
-    "/assets/PostView-6e6844ba.css"
+    "/assets/PostView-2cd9e5b8.js",
+    "/assets/PostView-ddd4b9e8.css"
   ],
   "node_modules/hookable/dist/index.mjs": [
     "/assets/remixicon-3d7b8a45.eot",
@@ -218,8 +218,8 @@
     "/assets/remixicon-931f98fd.svg"
   ],
   "src/assets/markdown/github-markdown-modify.css": [
-    "/assets/PostView-7e3f0dda.js",
-    "/assets/PostView-6e6844ba.css"
+    "/assets/PostView-2cd9e5b8.js",
+    "/assets/PostView-ddd4b9e8.css"
   ],
   "src/assets/yori.scss": [
     "/assets/remixicon-3d7b8a45.eot",
@@ -229,155 +229,155 @@
     "/assets/remixicon-931f98fd.svg"
   ],
   "src/components/about/TimeLine.vue": [
-    "/assets/AboutView-5c78121a.js",
+    "/assets/AboutView-9cee9cfc.js",
     "/assets/AboutView-f04e7b9b.css"
   ],
   "src/components/about/TimeLine.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/AboutView-5c78121a.js",
+    "/assets/AboutView-9cee9cfc.js",
     "/assets/AboutView-f04e7b9b.css"
   ],
   "src/components/about/TimeLine.vue?vue&type=style&index=0&scoped=6617f47a&lang.css": [
-    "/assets/AboutView-5c78121a.js",
+    "/assets/AboutView-9cee9cfc.js",
     "/assets/AboutView-f04e7b9b.css"
   ],
   "src/components/common/AvatarHeader.vue": [
-    "/assets/AvatarHeader-0b722d45.js",
+    "/assets/AvatarHeader-e7c21e85.js",
     "/assets/AvatarHeader-6476aa36.css"
   ],
   "src/components/common/AvatarHeader.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/AvatarHeader-0b722d45.js",
+    "/assets/AvatarHeader-e7c21e85.js",
     "/assets/AvatarHeader-6476aa36.css"
   ],
   "src/components/common/AvatarHeader.vue?vue&type=style&index=0&scoped=fc0fb6d4&lang.css": [
-    "/assets/AvatarHeader-0b722d45.js",
+    "/assets/AvatarHeader-e7c21e85.js",
     "/assets/AvatarHeader-6476aa36.css"
   ],
   "src/components/common/SocialLink.vue": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/components/common/SocialLink.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/components/common/SocialLink.vue?vue&type=style&index=0&scoped=e572dd24&lang.css": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/components/home/HomeHero.vue": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/components/home/HomeHero.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/components/home/HomeHero.vue?vue&type=style&index=0&scoped=c23bce1b&lang.css": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/components/home/HomeImage.vue": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/components/home/HomeImage.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/components/home/HomeImage.vue?vue&type=style&index=0&scoped=f1b50555&lang.css": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/components/home/HomeNav.vue": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/components/home/HomeNav.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/components/home/HomeNav.vue?vue&type=style&index=0&scoped=c6fe8bde&lang.css": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/components/layout/HeaderLogo.vue": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/HeaderLogo.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/HeaderLogo.vue?vue&type=style&index=0&scoped=5573df8a&lang.css": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/HeaderMenu.vue": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/HeaderMenu.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/HeaderMenu.vue?vue&type=style&index=0&scoped=3c803373&lang.css": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/HeaderNav.vue": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/HeaderNav.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/HeaderNav.vue?vue&type=style&index=0&scoped=2916aac7&lang.css": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/HeaderSwitch.vue": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/HeaderSwitch.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/HeaderSwitch.vue?vue&type=style&index=0&scoped=503f4ed3&lang.css": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/TheFooter.vue": [
-    "/assets/TheFooter-d3720df9.js",
+    "/assets/TheFooter-3e52cb9f.js",
     "/assets/TheFooter-79e6725e.css"
   ],
   "src/components/layout/TheFooter.vue?vue&type=style&index=0&scoped=0db30a10&lang.css": [
-    "/assets/TheFooter-d3720df9.js",
+    "/assets/TheFooter-3e52cb9f.js",
     "/assets/TheFooter-79e6725e.css"
   ],
   "src/components/layout/TheHeader.vue": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/TheHeader.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/layout/TheHeader.vue?vue&type=style&index=0&scoped=c829ef5c&lang.css": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/components/projects/ProjectCard.vue": [
-    "/assets/ProjectView-4ec6614c.js",
+    "/assets/ProjectView-0311af61.js",
     "/assets/ProjectView-9e611fe9.css"
   ],
   "src/components/projects/ProjectCard.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/ProjectView-4ec6614c.js",
+    "/assets/ProjectView-0311af61.js",
     "/assets/ProjectView-9e611fe9.css"
   ],
   "src/components/projects/ProjectCard.vue?vue&type=style&index=0&scoped=0469b9ff&lang.css": [
-    "/assets/ProjectView-4ec6614c.js",
+    "/assets/ProjectView-0311af61.js",
     "/assets/ProjectView-9e611fe9.css"
   ],
   "src/main.ts": [
@@ -395,81 +395,81 @@
     "/assets/remixicon-931f98fd.svg"
   ],
   "src/stores/MetaPosts.ts": [
-    "/assets/MetaPosts-7d72747d.js"
+    "/assets/MetaPosts-5cdaae5f.js"
   ],
   "src/utils/theme.ts": [
-    "/assets/theme-fbeb15e3.js"
+    "/assets/theme-6e5d294e.js"
   ],
   "src/views/AboutView.vue": [
-    "/assets/AboutView-5c78121a.js",
+    "/assets/AboutView-9cee9cfc.js",
     "/assets/AboutView-f04e7b9b.css"
   ],
   "src/views/AboutView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/AboutView-5c78121a.js",
+    "/assets/AboutView-9cee9cfc.js",
     "/assets/AboutView-f04e7b9b.css"
   ],
   "src/views/AboutView.vue?vue&type=style&index=0&scoped=27928978&lang.css": [
-    "/assets/AboutView-5c78121a.js",
+    "/assets/AboutView-9cee9cfc.js",
     "/assets/AboutView-f04e7b9b.css"
   ],
   "src/views/HomeView.vue": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/views/HomeView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/views/HomeView.vue?vue&type=style&index=0&scoped=a231e480&lang.css": [
-    "/assets/HomeView-2cdc3eab.js",
+    "/assets/HomeView-ca09ac1c.js",
     "/assets/HomeView-aac77586.css"
   ],
   "src/views/LayoutView.vue": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/views/LayoutView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/views/LayoutView.vue?vue&type=style&index=0&scoped=6a3ad82a&lang.css": [
-    "/assets/LayoutView-dd0453da.js",
+    "/assets/LayoutView-53833cad.js",
     "/assets/LayoutView-aca65701.css"
   ],
   "src/views/PostListView.vue": [
-    "/assets/PostListView-1c9e8bc6.js",
-    "/assets/PostListView-3f3c1583.css"
+    "/assets/PostListView-5d06bac3.js",
+    "/assets/PostListView-d1c1bc49.css"
   ],
   "src/views/PostListView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/PostListView-1c9e8bc6.js",
-    "/assets/PostListView-3f3c1583.css"
+    "/assets/PostListView-5d06bac3.js",
+    "/assets/PostListView-d1c1bc49.css"
   ],
   "src/views/PostListView.vue?vue&type=style&index=0&scoped=1de0f139&lang.css": [
-    "/assets/PostListView-1c9e8bc6.js",
-    "/assets/PostListView-3f3c1583.css"
+    "/assets/PostListView-5d06bac3.js",
+    "/assets/PostListView-d1c1bc49.css"
   ],
   "src/views/PostView.vue": [
-    "/assets/PostView-7e3f0dda.js",
-    "/assets/PostView-6e6844ba.css"
+    "/assets/PostView-2cd9e5b8.js",
+    "/assets/PostView-ddd4b9e8.css"
   ],
   "src/views/PostView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/PostView-7e3f0dda.js",
-    "/assets/PostView-6e6844ba.css"
+    "/assets/PostView-2cd9e5b8.js",
+    "/assets/PostView-ddd4b9e8.css"
   ],
-  "src/views/PostView.vue?vue&type=style&index=0&scoped=38ac142a&lang.css": [
-    "/assets/PostView-7e3f0dda.js",
-    "/assets/PostView-6e6844ba.css"
+  "src/views/PostView.vue?vue&type=style&index=0&scoped=61aa27a2&lang.css": [
+    "/assets/PostView-2cd9e5b8.js",
+    "/assets/PostView-ddd4b9e8.css"
   ],
   "src/views/ProjectView.vue": [
-    "/assets/ProjectView-4ec6614c.js",
+    "/assets/ProjectView-0311af61.js",
     "/assets/ProjectView-9e611fe9.css"
   ],
   "src/views/ProjectView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/ProjectView-4ec6614c.js",
+    "/assets/ProjectView-0311af61.js",
     "/assets/ProjectView-9e611fe9.css"
   ],
   "src/views/ProjectView.vue?vue&type=style&index=0&scoped=2def97b4&lang.css": [
-    "/assets/ProjectView-4ec6614c.js",
+    "/assets/ProjectView-0311af61.js",
     "/assets/ProjectView-9e611fe9.css"
   ],
   "virtual:vite-plugin-pages/generated-pages?id=~pages": [
