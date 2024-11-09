@@ -16,74 +16,66 @@
     "/assets/remixicon-e305b7e2.ttf",
     "/assets/remixicon-732d6afa.svg"
   ],
-  "../../../../../Not-By-AI/Written-By-Human-Not-By-AI-Badge-black.svg": [
-    "/assets/PostView-d175cb08.js",
-    "/assets/PostView-835245e1.css"
-  ],
-  "../../../../../Not-By-AI/Written-By-Human-Not-By-AI-Badge-white.svg": [
-    "/assets/PostView-d175cb08.js",
-    "/assets/PostView-835245e1.css"
-  ],
   "../../../../../avatar.webp": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
   "docs/about/config.json": [
-    "/assets/AboutView-0cf14a49.js",
-    "/assets/AboutView-562c3e51.css"
+    "/assets/AboutView-f4222ea4.js",
+    "/assets/AboutView-9bd32d70.css"
   ],
-  "docs/home/config.json": [
+  "docs/global_config.json": [
     "/assets/remixicon-560f6d7c.eot",
     "/assets/remixicon-00e20f19.woff2",
     "/assets/remixicon-4156e216.woff",
     "/assets/remixicon-e305b7e2.ttf",
     "/assets/remixicon-732d6afa.svg"
   ],
+  "docs/home/config.json": [
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
+  ],
   "docs/posts/2023.11.14-from-east-to-west.md": [
-    "/assets/2023.11.14-from-east-to-west-08b1ff9e.js"
+    "/assets/2023.11.14-from-east-to-west-59a5da06.js"
   ],
   "docs/posts/2023.11.14-from-east-to-west.md?vue&type=script&setup=true&lang.ts": [
-    "/assets/2023.11.14-from-east-to-west-08b1ff9e.js"
+    "/assets/2023.11.14-from-east-to-west-59a5da06.js"
   ],
   "docs/posts/2024.04.06-sleep-on-the-moon.md": [
-    "/assets/2024.04.06-sleep-on-the-moon-3ab0c60a.js"
+    "/assets/2024.04.06-sleep-on-the-moon-8f4e9f78.js"
   ],
   "docs/posts/2024.04.06-sleep-on-the-moon.md?vue&type=script&setup=true&lang.ts": [
-    "/assets/2024.04.06-sleep-on-the-moon-3ab0c60a.js"
+    "/assets/2024.04.06-sleep-on-the-moon-8f4e9f78.js"
   ],
-  "docs/posts/csapp-bomb.md": [
-    "/assets/csapp-bomb-a8f614e1.js"
-  ],
-  "docs/posts/csapp-bomb.md?vue&type=script&setup=true&lang.ts": [
-    "/assets/csapp-bomb-a8f614e1.js"
-  ],
-  "docs/posts/csapp-datalab.md": [
-    "/assets/csapp-datalab-7ea930bd.js"
-  ],
-  "docs/posts/csapp-datalab.md?vue&type=script&setup=true&lang.ts": [
-    "/assets/csapp-datalab-7ea930bd.js"
+  "docs/posts/config.json": [
+    "/assets/PostListView-25d68e11.js",
+    "/assets/PostListView-6fc432e9.css"
   ],
   "docs/posts/java-maven.md": [
-    "/assets/java-maven-3fbf6c58.js"
+    "/assets/java-maven-895e2c49.js"
   ],
   "docs/posts/java-maven.md?vue&type=script&setup=true&lang.ts": [
-    "/assets/java-maven-3fbf6c58.js"
+    "/assets/java-maven-895e2c49.js"
   ],
   "docs/posts/new-personal-site.md": [
-    "/assets/new-personal-site-44c9e23f.js"
+    "/assets/new-personal-site-659bcd51.js"
   ],
   "docs/posts/new-personal-site.md?vue&type=script&setup=true&lang.ts": [
-    "/assets/new-personal-site-44c9e23f.js"
+    "/assets/new-personal-site-659bcd51.js"
   ],
   "docs/posts/site-build.md": [
-    "/assets/site-build-91585b8a.js"
+    "/assets/site-build-1f7b4ba6.js"
   ],
   "docs/posts/site-build.md?vue&type=script&setup=true&lang.ts": [
-    "/assets/site-build-91585b8a.js"
+    "/assets/site-build-1f7b4ba6.js"
   ],
   "docs/projects/config.json": [
-    "/assets/ProjectView-e86d8a87.js",
-    "/assets/ProjectView-9e611fe9.css"
+    "/assets/ProjectsView-70b1d35c.js",
+    "/assets/ProjectsView-75e4ed06.css"
+  ],
+  "docs/series/config.json": [
+    "/assets/SeriesView-f4ec1bab.js",
+    "/assets/SeriesView-ddf234b5.css"
   ],
   "index.html": [
     "/assets/remixicon-560f6d7c.eot",
@@ -96,8 +88,8 @@
     "/assets/giscus-BNK3dBIH-a0a9d5c1.js"
   ],
   "node_modules/@giscus/vue/dist/index.js": [
-    "/assets/PostView-d175cb08.js",
-    "/assets/PostView-835245e1.css"
+    "/assets/PostView-9452a6fd.js",
+    "/assets/PostView-f51c62c7.css"
   ],
   "node_modules/@iconify/vue/dist/iconify.mjs": [
     "/assets/remixicon-560f6d7c.eot",
@@ -163,8 +155,8 @@
     "/assets/remixicon-732d6afa.svg"
   ],
   "node_modules/highlight.js/styles/github.css": [
-    "/assets/PostView-d175cb08.js",
-    "/assets/PostView-835245e1.css"
+    "/assets/PostView-9452a6fd.js",
+    "/assets/PostView-f51c62c7.css"
   ],
   "node_modules/hookable/dist/index.mjs": [
     "/assets/remixicon-560f6d7c.eot",
@@ -237,8 +229,8 @@
     "/assets/remixicon-732d6afa.svg"
   ],
   "src/assets/markdown/github-markdown-modify.css": [
-    "/assets/PostView-d175cb08.js",
-    "/assets/PostView-835245e1.css"
+    "/assets/PostView-9452a6fd.js",
+    "/assets/PostView-f51c62c7.css"
   ],
   "src/assets/yori.scss": [
     "/assets/remixicon-560f6d7c.eot",
@@ -248,156 +240,147 @@
     "/assets/remixicon-732d6afa.svg"
   ],
   "src/components/about/TimeLine.vue": [
-    "/assets/AboutView-0cf14a49.js",
-    "/assets/AboutView-562c3e51.css"
+    "/assets/AboutView-f4222ea4.js",
+    "/assets/AboutView-9bd32d70.css"
   ],
   "src/components/about/TimeLine.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/AboutView-0cf14a49.js",
-    "/assets/AboutView-562c3e51.css"
+    "/assets/AboutView-f4222ea4.js",
+    "/assets/AboutView-9bd32d70.css"
   ],
   "src/components/about/TimeLine.vue?vue&type=style&index=0&scoped=7b97d9d5&lang.css": [
-    "/assets/AboutView-0cf14a49.js",
-    "/assets/AboutView-562c3e51.css"
-  ],
-  "src/components/common/AvatarHeader.vue": [
-    "/assets/AvatarHeader-b9faef08.js",
-    "/assets/AvatarHeader-a78c5a7c.css"
-  ],
-  "src/components/common/AvatarHeader.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/AvatarHeader-b9faef08.js",
-    "/assets/AvatarHeader-a78c5a7c.css"
-  ],
-  "src/components/common/AvatarHeader.vue?vue&type=style&index=0&scoped=543eb76a&lang.css": [
-    "/assets/AvatarHeader-b9faef08.js",
-    "/assets/AvatarHeader-a78c5a7c.css"
+    "/assets/AboutView-f4222ea4.js",
+    "/assets/AboutView-9bd32d70.css"
   ],
   "src/components/common/SocialLink.vue": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
   "src/components/common/SocialLink.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
   "src/components/common/SocialLink.vue?vue&type=style&index=0&scoped=e572dd24&lang.css": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
+  ],
+  "src/components/common/TheTitle.vue?vue&type=script&setup=true&lang.ts": [
+    "/assets/TheTitle.vue_vue_type_script_setup_true_lang-d64417db.js"
   ],
   "src/components/home/HomeHero.vue": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
   "src/components/home/HomeHero.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
   "src/components/home/HomeHero.vue?vue&type=style&index=0&scoped=c23bce1b&lang.css": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
   "src/components/home/HomeImage.vue": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
   "src/components/home/HomeImage.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
-  "src/components/home/HomeImage.vue?vue&type=style&index=0&scoped=f1b50555&lang.css": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+  "src/components/home/HomeImage.vue?vue&type=style&index=0&scoped=1486efb5&lang.css": [
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
   "src/components/home/HomeNav.vue": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
   "src/components/home/HomeNav.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
   "src/components/home/HomeNav.vue?vue&type=style&index=0&scoped=c6fe8bde&lang.css": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
   "src/components/layout/HeaderBrief.vue": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/layout/HeaderBrief.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/layout/HeaderBrief.vue?vue&type=style&index=0&scoped=c0f368b9&lang.css": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/layout/HeaderMenu.vue": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/layout/HeaderMenu.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/layout/HeaderMenu.vue?vue&type=style&index=0&scoped=d4414115&lang.css": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/layout/HeaderNav.vue": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/layout/HeaderNav.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/layout/HeaderNav.vue?vue&type=style&index=0&scoped=2916aac7&lang.css": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/layout/HeaderSwitch.vue": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/layout/HeaderSwitch.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
-  "src/components/layout/HeaderSwitch.vue?vue&type=style&index=0&scoped=adfb8f3e&lang.css": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+  "src/components/layout/HeaderSwitch.vue?vue&type=style&index=0&scoped=ab64a2f7&lang.css": [
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/layout/TheFooter.vue": [
-    "/assets/TheFooter-972852bf.js",
+    "/assets/TheFooter-3bc76cda.js",
     "/assets/TheFooter-ef5f8b8a.css"
   ],
   "src/components/layout/TheFooter.vue?vue&type=style&index=0&scoped=e0d19288&lang.css": [
-    "/assets/TheFooter-972852bf.js",
+    "/assets/TheFooter-3bc76cda.js",
     "/assets/TheFooter-ef5f8b8a.css"
   ],
   "src/components/layout/TheHeader.vue": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/layout/TheHeader.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/layout/TheHeader.vue?vue&type=style&index=0&scoped=a646fa76&lang.css": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/components/projects/ProjectCard.vue": [
-    "/assets/ProjectView-e86d8a87.js",
-    "/assets/ProjectView-9e611fe9.css"
+    "/assets/ProjectsView-70b1d35c.js",
+    "/assets/ProjectsView-75e4ed06.css"
   ],
   "src/components/projects/ProjectCard.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/ProjectView-e86d8a87.js",
-    "/assets/ProjectView-9e611fe9.css"
+    "/assets/ProjectsView-70b1d35c.js",
+    "/assets/ProjectsView-75e4ed06.css"
   ],
   "src/components/projects/ProjectCard.vue?vue&type=style&index=0&scoped=0469b9ff&lang.css": [
-    "/assets/ProjectView-e86d8a87.js",
-    "/assets/ProjectView-9e611fe9.css"
+    "/assets/ProjectsView-70b1d35c.js",
+    "/assets/ProjectsView-75e4ed06.css"
   ],
   "src/main.ts": [
     "/assets/remixicon-560f6d7c.eot",
@@ -414,7 +397,7 @@
     "/assets/remixicon-732d6afa.svg"
   ],
   "src/stores/MetaPosts.ts": [
-    "/assets/MetaPosts-73491e1e.js"
+    "/assets/MetaPosts-2335b17c.js"
   ],
   "src/utils/theme.ts": [
     "/assets/remixicon-560f6d7c.eot",
@@ -424,97 +407,103 @@
     "/assets/remixicon-732d6afa.svg"
   ],
   "src/views/AboutView.vue": [
-    "/assets/AboutView-0cf14a49.js",
-    "/assets/AboutView-562c3e51.css"
+    "/assets/AboutView-f4222ea4.js",
+    "/assets/AboutView-9bd32d70.css"
   ],
   "src/views/AboutView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/AboutView-0cf14a49.js",
-    "/assets/AboutView-562c3e51.css"
+    "/assets/AboutView-f4222ea4.js",
+    "/assets/AboutView-9bd32d70.css"
   ],
-  "src/views/AboutView.vue?vue&type=style&index=0&scoped=27928978&lang.css": [
-    "/assets/AboutView-0cf14a49.js",
-    "/assets/AboutView-562c3e51.css"
+  "src/views/AboutView.vue?vue&type=style&index=0&scoped=461c90b3&lang.css": [
+    "/assets/AboutView-f4222ea4.js",
+    "/assets/AboutView-9bd32d70.css"
   ],
   "src/views/HomeView.vue": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
   "src/views/HomeView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
-  "src/views/HomeView.vue?vue&type=style&index=0&scoped=58e9cd3f&lang.css": [
-    "/assets/HomeView-ac418d26.js",
-    "/assets/HomeView-2743705f.css"
+  "src/views/HomeView.vue?vue&type=style&index=0&scoped=562f4d02&lang.css": [
+    "/assets/HomeView-da3610d4.js",
+    "/assets/HomeView-8802399b.css"
   ],
   "src/views/LayoutView.vue": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/views/LayoutView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/views/LayoutView.vue?vue&type=style&index=0&scoped=330fdc15&lang.css": [
-    "/assets/LayoutView-a0eb07bf.js",
-    "/assets/LayoutView-1755e766.css"
+    "/assets/LayoutView-ca127011.js",
+    "/assets/LayoutView-0279be04.css"
   ],
   "src/views/ListView.vue": [
-    "/assets/ListView-cf8f8dec.js",
-    "/assets/ListView-6509708b.css"
+    "/assets/ListView-1cdf7c30.js",
+    "/assets/ListView-f3b4fce5.css"
   ],
   "src/views/ListView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/ListView-cf8f8dec.js",
-    "/assets/ListView-6509708b.css"
+    "/assets/ListView-1cdf7c30.js",
+    "/assets/ListView-f3b4fce5.css"
   ],
-  "src/views/ListView.vue?vue&type=style&index=0&scoped=07eb3217&lang.css": [
-    "/assets/ListView-cf8f8dec.js",
-    "/assets/ListView-6509708b.css"
+  "src/views/ListView.vue?vue&type=style&index=0&scoped=bf9080f9&lang.css": [
+    "/assets/ListView-1cdf7c30.js",
+    "/assets/ListView-f3b4fce5.css"
   ],
   "src/views/PostListView.vue": [
-    "/assets/PostListView-7f5ef49e.js"
+    "/assets/PostListView-25d68e11.js",
+    "/assets/PostListView-6fc432e9.css"
   ],
   "src/views/PostListView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/PostListView-7f5ef49e.js"
+    "/assets/PostListView-25d68e11.js",
+    "/assets/PostListView-6fc432e9.css"
+  ],
+  "src/views/PostListView.vue?vue&type=style&index=0&scoped=b5ee52b0&lang.css": [
+    "/assets/PostListView-25d68e11.js",
+    "/assets/PostListView-6fc432e9.css"
   ],
   "src/views/PostView.vue": [
-    "/assets/PostView-d175cb08.js",
-    "/assets/PostView-835245e1.css"
+    "/assets/PostView-9452a6fd.js",
+    "/assets/PostView-f51c62c7.css"
   ],
   "src/views/PostView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/PostView-d175cb08.js",
-    "/assets/PostView-835245e1.css"
+    "/assets/PostView-9452a6fd.js",
+    "/assets/PostView-f51c62c7.css"
   ],
-  "src/views/PostView.vue?vue&type=style&index=0&scoped=9afb4032&lang.css": [
-    "/assets/PostView-d175cb08.js",
-    "/assets/PostView-835245e1.css"
+  "src/views/PostView.vue?vue&type=style&index=0&scoped=39e571f6&lang.css": [
+    "/assets/PostView-9452a6fd.js",
+    "/assets/PostView-f51c62c7.css"
   ],
-  "src/views/ProjectView.vue": [
-    "/assets/ProjectView-e86d8a87.js",
-    "/assets/ProjectView-9e611fe9.css"
+  "src/views/ProjectsView.vue": [
+    "/assets/ProjectsView-70b1d35c.js",
+    "/assets/ProjectsView-75e4ed06.css"
   ],
-  "src/views/ProjectView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/ProjectView-e86d8a87.js",
-    "/assets/ProjectView-9e611fe9.css"
+  "src/views/ProjectsView.vue?vue&type=script&setup=true&lang.ts": [
+    "/assets/ProjectsView-70b1d35c.js",
+    "/assets/ProjectsView-75e4ed06.css"
   ],
-  "src/views/ProjectView.vue?vue&type=style&index=0&scoped=2def97b4&lang.css": [
-    "/assets/ProjectView-e86d8a87.js",
-    "/assets/ProjectView-9e611fe9.css"
+  "src/views/ProjectsView.vue?vue&type=style&index=0&scoped=10478194&lang.css": [
+    "/assets/ProjectsView-70b1d35c.js",
+    "/assets/ProjectsView-75e4ed06.css"
   ],
   "src/views/SeriesView.vue": [
-    "/assets/SeriesView-df4ffdb1.js",
-    "/assets/SeriesView-74190c32.css"
+    "/assets/SeriesView-f4ec1bab.js",
+    "/assets/SeriesView-ddf234b5.css"
   ],
   "src/views/SeriesView.vue?vue&type=script&setup=true&lang.ts": [
-    "/assets/SeriesView-df4ffdb1.js",
-    "/assets/SeriesView-74190c32.css"
+    "/assets/SeriesView-f4ec1bab.js",
+    "/assets/SeriesView-ddf234b5.css"
   ],
-  "src/views/SeriesView.vue?vue&type=style&index=0&scoped=39998385&lang.css": [
-    "/assets/SeriesView-df4ffdb1.js",
-    "/assets/SeriesView-74190c32.css"
+  "src/views/SeriesView.vue?vue&type=style&index=0&scoped=1b2a9a14&lang.css": [
+    "/assets/SeriesView-f4ec1bab.js",
+    "/assets/SeriesView-ddf234b5.css"
   ],
   "src/views/TagsView.vue": [
-    "/assets/TagsView-19afc2f6.js"
+    "/assets/TagsView-a26eb516.js"
   ],
   "virtual:vite-plugin-pages/generated-pages?id=~pages": [
     "/assets/remixicon-560f6d7c.eot",

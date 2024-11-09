@@ -1,0 +1,1 @@
+import{d as t,c as s,a as o,t as a,o as r}from"./app-af6458e4.js";const c={class:"yr-flex-row-4"},n={class:"yr-h1"},p=t({__name:"TheTitle",props:{title:{}},setup(_){return(e,i)=>(r(),s("div",c,[o("h1",n,a(e.title),1)]))}});export{p as _};
